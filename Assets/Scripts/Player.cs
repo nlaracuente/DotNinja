@@ -17,6 +17,12 @@ public class Player : MonoBehaviour
     float m_connectionDealy = 0.25f;
 
     /// <summary>
+    /// Where to place the Z of the line renderer's position to avoid being infront of the player
+    /// </summary>
+    [SerializeField]
+    float m_lineZPosition = 2f;
+
+    /// <summary>
     /// A reference to the line render that shows the connections to the connectors
     /// </summary>
     [SerializeField]
@@ -125,7 +131,10 @@ public class Player : MonoBehaviour
         for (int i = 1; i <= m_connectors.Count; i++)
         {
             Connector connector = m_connectors[i - 1];
-            positions[i] = connector.transform.position;
+            Vector3 position = new Vector3(connector.transform.position.x, connector.transform.position.y, m_lineZPosition);
+
+            // Place the Z away from the player
+            positions[i] = position;
         }
 
         m_lineRenderer.SetPositions(positions);
@@ -182,11 +191,16 @@ public class Player : MonoBehaviour
         while (m_connectors.Count > 0)
         {
             Connector connector = m_connectors[0];
-            Vector3 destination = connector.Anchor.position;
+            Vector2 destination = connector.Anchor.position;
 
-            while (Vector3.Distance(transform.position, destination) > .001f)
+            while (Vector2.Distance(transform.position, destination) > .001f)
             {
-                transform.position = Vector3.MoveTowards(transform.position, destination, m_moveSpeed * Time.deltaTime);
+                Vector3 position = Vector2.MoveTowards(transform.position, destination, m_moveSpeed * Time.deltaTime);
+
+                // Keep the player's current Z position
+                position.z = transform.position.z;
+                transform.position = position;
+
                 UpdatePlayerPositionInLineRenderer();
                 yield return new WaitForEndOfFrame();
             }
