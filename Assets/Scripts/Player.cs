@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class Player : MonoBehaviour
 {
@@ -56,7 +57,8 @@ public class Player : MonoBehaviour
 
         foreach (Connector connector in FindObjectsOfType<Connector>())
         {
-            connector.OnClicked += OnConnectorClicked;
+            connector.OnSelected += OnConnectorSelected;
+            connector.OnDeselected += OnConnectorDeselected;
         }
     }
 
@@ -79,7 +81,7 @@ public class Player : MonoBehaviour
     /// When the connector exist it removes everything after it
     /// </summary>
     /// <param name="connector"></param>
-    public void OnConnectorClicked(Connector connector)
+    public void OnConnectorSelected(Connector connector)
     {
         // Ignore when moving
         if (IsMoving)
@@ -87,22 +89,36 @@ public class Player : MonoBehaviour
             return;
         }
 
-        if (!m_connectors.Contains(connector))
+        // Last Connector
+        Connector lastConnetor = m_connectors.LastOrDefault();
+
+        // Not already on the last or not the last one on the list
+        // Then we can add or re-add it
+        if (lastConnetor == null || lastConnetor != connector)
         {
             m_connectors.Add(connector);
-
-        // Remove everything after this connector but keep this one
-        }  else
-        {
-            int index = m_connectors.IndexOf(connector) + 1;
-            int count = m_connectors.Count - index;
-
-            // Avoid attempting to remove beyond the last item
-            if (index < m_connectors.Count - 1)
-            {
-                m_connectors.RemoveRange(index, count);
-            }
         }
+
+        DrawConnections();
+    }
+
+    /// <summary>
+    /// Removes the given connector from the list of connections and anything after it
+    /// </summary>
+    /// <param name="connector"></param>
+    public void OnConnectorDeselected(Connector connector)
+    {
+        // Ignore when moving
+        if (IsMoving)
+        {
+            return;
+        }
+
+        int index = m_connectors.LastIndexOf(connector) + 1;
+        int count = m_connectors.Count - index;
+
+        // Avoid attempting to remove beyond the last item
+        m_connectors.RemoveRange(index, count);
 
         DrawConnections();
     }

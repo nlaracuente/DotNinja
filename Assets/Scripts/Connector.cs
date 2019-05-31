@@ -8,7 +8,8 @@ using UnityEngine;
 public class Connector : MonoBehaviour
 {
     public delegate void ConnectorClickedEvent(Connector connector);
-    public event ConnectorClickedEvent OnClicked;
+    public event ConnectorClickedEvent OnSelected;
+    public event ConnectorClickedEvent OnDeselected;
 
     [SerializeField]
     Transform m_anchor;
@@ -32,8 +33,16 @@ public class Connector : MonoBehaviour
     /// <summary>
     /// Dispatches connector clicked event
     /// </summary>
-    private void OnMouseDown()
+    private void OnMouseOver()
     {
-        OnClicked?.Invoke(this);
+        if (Input.GetButtonDown("Select"))
+        {
+            OnSelected?.Invoke(this);
+        }
+        else if (Input.GetButtonDown("Deselect"))
+        {
+            OnDeselected?.Invoke(this);
+        }
+        
     }
 }
