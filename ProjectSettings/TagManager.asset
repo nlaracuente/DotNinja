@@ -50,6 +50,9 @@ TagManager:
   - name: Connectors
     uniqueID: 3203903727
     locked: 0
+  - name: Door
+    uniqueID: 1820839961
+    locked: 0
   - name: Rope
     uniqueID: 1611273727
     locked: 0

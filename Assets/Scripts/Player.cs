@@ -45,6 +45,11 @@ public class Player : MonoBehaviour
     public bool HasKey { get; set; }
 
     /// <summary>
+    /// True when the player reaches the door and has the key
+    /// </summary>
+    public bool LevelCompleted { get; private set; }
+
+    /// <summary>
     /// Subscribes to all connectors
     /// </summary>
     void Start()
@@ -67,10 +72,12 @@ public class Player : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Checks for commitment to movement
+    /// </summary>
     private void Update()
     {
-        // Ignore when moving
-        if (IsMoving)
+        if (IsMoving || LevelCompleted)
         {
             return;
         }
@@ -88,8 +95,7 @@ public class Player : MonoBehaviour
     /// <param name="connector"></param>
     public void OnConnectorSelected(Connector connector)
     {
-        // Ignore when moving
-        if (IsMoving)
+        if (IsMoving || LevelCompleted)
         {
             return;
         }
@@ -113,8 +119,7 @@ public class Player : MonoBehaviour
     /// <param name="connector"></param>
     public void OnConnectorDeselected(Connector connector)
     {
-        // Ignore when moving
-        if (IsMoving)
+        if (IsMoving || LevelCompleted)
         {
             return;
         }
@@ -181,14 +186,23 @@ public class Player : MonoBehaviour
     void OnMouseDown()
     {
         // Ignore when moving
-        if (IsMoving)
+        if (IsMoving || LevelCompleted)
         {
             return;
         }
 
+        ClearConnections();
+    }
+
+    /// <summary>
+    /// Clears all active connections and updates the line renderer
+    /// </summary>
+    private void ClearConnections()
+    {
         m_connectors.Clear();
         DrawConnections();
     }
+
 
     /// <summary>
     /// Triggers the movement routine
@@ -227,14 +241,35 @@ public class Player : MonoBehaviour
             }
 
             transform.position = destination;
-            m_connectors.RemoveAt(0);
+
+            // If this is a door and we have the key then stop all further connections
+            // to trigger the door animation and end of level
+            Door door = connector.GetComponentInParent<Door>();
+            if(HasKey && door != null)
+            {
+                ClearConnections();
+                StartCoroutine(OpenDoorRoutine(door));
 
             // Re-draw connections to reflect the removed one
-            DrawConnections();
-
-            yield return new WaitForSeconds(m_connectionDealy);
+            } else {
+                m_connectors.RemoveAt(0);
+                DrawConnections();
+                yield return new WaitForSeconds(m_connectionDealy);
+            }
         }
 
         IsMoving = false;
+    }
+
+    /// <summary>
+    /// Waits for the door to open before triggering level completed
+    /// </summary>
+    /// <param name="door"></param>
+    /// <returns></returns>
+    IEnumerator OpenDoorRoutine(Door door)
+    {
+        LevelCompleted = true;
+        yield return StartCoroutine(door.OpenRoutine());
+        GameManager.instance.LevelCompleted();
     }
 }
