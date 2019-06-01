@@ -30,6 +30,12 @@ public class Player : MonoBehaviour
     LineRenderer m_lineRenderer;
 
     /// <summary>
+    /// The layer mask for obstacles that prevent connections from being made
+    /// </summary>
+    [SerializeField]
+    LayerMask m_obstacleMask;
+
+    /// <summary>
     /// A of connectors to move towards
     /// </summary>
     List<Connector> m_connectors;    
@@ -89,6 +95,18 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
+    /// Returns true of there are no obstacles in the way of the ray
+    /// </summary>
+    /// <param name="start"></param>
+    /// <param name="end"></param>
+    /// <returns></returns>
+    bool IsConnectionPossible(Vector2 start, Vector2 end)
+    {
+        var hit = Physics2D.Linecast(start, end, m_obstacleMask);
+        return hit.collider == null;
+    }
+
+    /// <summary>
     /// Registers the connector as a new connection when it does not exist
     /// When the connector exist it removes everything after it
     /// </summary>
@@ -107,7 +125,16 @@ public class Player : MonoBehaviour
         // Then we can add or re-add it
         if (lastConnetor == null || lastConnetor != connector)
         {
-            m_connectors.Add(connector);
+            // To validate the connection is good we need to line cast
+            // from either the player's current position or the last connector on the list
+            // to the connector passed in
+            Vector2 start = lastConnetor ? lastConnetor.transform.position : transform.position;
+            Vector2 end = connector.transform.position;
+
+            if (IsConnectionPossible(start, end))
+            {
+                m_connectors.Add(connector);
+            }
         }
 
         DrawConnections();
