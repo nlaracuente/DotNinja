@@ -4,11 +4,16 @@ using UnityEngine;
 
 public class LevelController : MonoBehaviour
 {
+
+
     /// <summary>
     /// Triggers the GameManager to load the level
     /// </summary>
-    void Start()
+    void Update()
     {
-        GameManager.instance.LoadLevel();
+        if (!GameManager.instance.IsLevelLoaded)
+        {
+            GameManager.instance.LoadLevel();
+        }
     }
 }

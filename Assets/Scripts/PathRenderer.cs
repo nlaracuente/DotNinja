@@ -137,7 +137,7 @@ public class PathRenderer : MonoBehaviour
         {
             connector.OnSelectedEvent += OnConnectorSelected;
             connector.OnDeselectedEvent += OnConnectorDeselected;
-            connector.OnMouseOverEvent += OnMouseOnConnector;
+            connector.OnMouseOverEvent += OnMouseEnterConnector;
             connector.OnMouseExitEvent += OnMouseExitConnector;
         }
     }
@@ -195,6 +195,14 @@ public class PathRenderer : MonoBehaviour
         // Last Connector
         Connector lastConnetor = Connectors.LastOrDefault();
 
+        // We are only allowing a single connection per connector
+        // and this connector is already on the list
+        if (GameManager.instance.SingleConnections && Connectors.Contains(connector))
+        {
+            // Piggy back on the conditions that prevents adding new connectors
+            lastConnetor = connector;
+        }
+
         // Not already on the last or not the last one on the list
         // Then we can add or re-add it
         if (lastConnetor == null || lastConnetor != connector)
@@ -238,14 +246,22 @@ public class PathRenderer : MonoBehaviour
     /// Updates <see cref="m_mouseOnConnector"/> to true
     /// </summary>
     /// <param name="connector"></param>
-    public void OnMouseOnConnector(Connector connector)
+    public void OnMouseEnterConnector(Connector connector)
     {
         if (PreventAction())
         {
             return;
         }
 
+        // Default to true
         m_mouseOnConnector = true;
+
+        // If we are only allowing only single connections
+        // then we don't want to recognize this action if the connector is already in the list
+        if (GameManager.instance.SingleConnections && Connectors.Contains(connector))
+        {
+            m_mouseOnConnector = false;
+        }
     }
 
     /// <summary>

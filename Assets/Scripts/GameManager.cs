@@ -11,6 +11,13 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
 
     /// <summary>
+    /// When true only allows one connection per connector at a time
+    /// </summary>
+    [SerializeField]
+    bool m_singleConnections = true;
+    public bool SingleConnections { get { return m_singleConnections; } }
+
+    /// <summary>
     /// How long the fade in effect lasts
     /// </summary>
     [SerializeField]
@@ -76,6 +83,11 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Holds the routine for loading the level to avoid re-loading it
+    /// </summary>
+    IEnumerator m_loadLevelRoutine;
+
+    /// <summary>
     /// Sets up instance
     /// </summary>
     private void Awake()
@@ -123,9 +135,18 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void LoadLevel()
     {
+        // Force the fader to be null in case we are tryng to reference and old one
+        m_fader = null;
+
         IsLevelLoaded = false;
         IsLevelCompleted = false;
-        StartCoroutine(LoadLevelRoutine());
+
+        // Not already running
+        if (m_loadLevelRoutine == null)
+        {
+            m_loadLevelRoutine = LoadLevelRoutine();
+            StartCoroutine(m_loadLevelRoutine);
+        }
     }
 
     /// <summary>
@@ -134,6 +155,7 @@ public class GameManager : MonoBehaviour
     /// <returns></returns>
     IEnumerator LoadLevelRoutine()
     {
+        // Wait a frame to ensure the level has loaded all the assets
         yield return StartCoroutine(Fader.FadeRoutine(1f, 0f, m_fadeInDelay));
         IsLevelLoaded = true;
     }
