@@ -21,6 +21,23 @@ public class PathRenderer : MonoBehaviour
     LineRenderer m_activePathRenderer;
 
     /// <summary>
+    /// Material to use on the line renderer when a connection has not been made
+    [SerializeField]
+    Material m_pathPendingMaterial;
+
+    /// <summary>
+    /// Material to use on the line renderer when the path is available
+    /// </summary>
+    [SerializeField]
+    Material m_invalidPathMaterial;
+
+    /// <summary>
+    /// Material to use on the line renderer when the path is not available
+    /// </summary>
+    [SerializeField]
+    Material m_validPathMaterial;
+
+    /// <summary>
     /// Where to place the Z of the line renderer's position to avoid being infront of the player
     /// </summary>
     [SerializeField]
@@ -36,6 +53,11 @@ public class PathRenderer : MonoBehaviour
     /// A container for all active connectors
     /// </summary>
     public List<Connector> Connectors { get; private set; } = new List<Connector>();
+
+    /// <summary>
+    /// True while the mouse is on a connector
+    /// </summary>
+    bool m_mouseOnConnector = false;
 
     /// <summary>
     /// A reference to the player component
@@ -65,8 +87,17 @@ public class PathRenderer : MonoBehaviour
     {
         m_player = FindObjectOfType<Player>();
         Connectors = new List<Connector>();
+
         ResetRenderers();
         SubscribeToConnectors();
+    }
+
+    /// <summary>
+    /// Shows paths preview
+    /// </summary>
+    private void Update()
+    {
+        PreviewPath();
     }
 
     /// <summary>
@@ -104,8 +135,49 @@ public class PathRenderer : MonoBehaviour
     {
         foreach (Connector connector in FindObjectsOfType<Connector>())
         {
-            connector.OnSelected += OnConnectorSelected;
-            connector.OnDeselected += OnConnectorDeselected;
+            connector.OnSelectedEvent += OnConnectorSelected;
+            connector.OnDeselectedEvent += OnConnectorDeselected;
+            connector.OnMouseOverEvent += OnMouseOnConnector;
+            connector.OnMouseExitEvent += OnMouseExitConnector;
+        }
+    }
+
+    /// <summary>
+    /// Display a potential connection
+    /// </summary>
+    void PreviewPath()
+    {
+        // Cannot previe path
+        if (IsPlayerNotAvailable())
+        {
+            m_previewPathRenderer.positionCount = 0;
+            return;
+        }
+        
+        Connector lastConnetor = Connectors.LastOrDefault();
+
+        // To validate the connection is good we need to line cast
+        // from either the player's current position or the last connector on the list
+        // to the connector passed in
+        Vector2 start = lastConnetor ? lastConnetor.transform.position : PlayerPosition;
+        Vector2 end = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+        // Set the positions
+        m_previewPathRenderer.positionCount = 2;
+        m_previewPathRenderer.SetPositions( new Vector3[] {start, end} );
+
+        // Update colors depending of what is available
+        // Default to pending connection
+        m_previewPathRenderer.material = m_pathPendingMaterial;
+        if (m_mouseOnConnector)
+        {
+            if (IsConnectionPossible(start, end))
+            {
+                m_previewPathRenderer.material = m_validPathMaterial;
+            } else
+            {
+                m_previewPathRenderer.material = m_invalidPathMaterial;
+            }
         }
     }
 
@@ -161,6 +233,34 @@ public class PathRenderer : MonoBehaviour
         Connectors.RemoveRange(index, count);
 
         DrawConnections();
+    }
+
+    /// <summary>
+    /// Updates <see cref="m_mouseOnConnector"/> to true
+    /// </summary>
+    /// <param name="connector"></param>
+    public void OnMouseOnConnector(Connector connector)
+    {
+        if (IsPlayerNotAvailable())
+        {
+            return;
+        }
+
+        m_mouseOnConnector = true;
+    }
+
+    /// <summary>
+    /// Updates <see cref="m_mouseOnConnector"/> to false
+    /// </summary>
+    /// <param name="connector"></param>
+    public void OnMouseExitConnector(Connector connector)
+    {
+        if (IsPlayerNotAvailable())
+        {
+            return;
+        }
+
+        m_mouseOnConnector = false;
     }
 
     /// <summary>

@@ -8,8 +8,11 @@ using UnityEngine;
 public class Connector : MonoBehaviour
 {
     public delegate void ConnectorClickedEvent(Connector connector);
-    public event ConnectorClickedEvent OnSelected;
-    public event ConnectorClickedEvent OnDeselected;
+    public event ConnectorClickedEvent OnSelectedEvent;
+    public event ConnectorClickedEvent OnDeselectedEvent;
+
+    public event ConnectorClickedEvent OnMouseOverEvent;
+    public event ConnectorClickedEvent OnMouseExitEvent;
 
     [SerializeField]
     Transform m_anchor;
@@ -31,18 +34,29 @@ public class Connector : MonoBehaviour
     }
 
     /// <summary>
-    /// Dispatches connector clicked event
+    /// Dispatches on mouse over event
+    /// If the select or deselect buttons are pressed 
+    /// then it sends their respective events
     /// </summary>
     private void OnMouseOver()
     {
+        OnMouseOverEvent?.Invoke(this);
+
         if (Input.GetButtonDown("Select"))
         {
-            OnSelected?.Invoke(this);
+            OnSelectedEvent?.Invoke(this);
         }
         else if (Input.GetButtonDown("Deselect"))
         {
-            OnDeselected?.Invoke(this);
-        }
-        
+            OnDeselectedEvent?.Invoke(this);
+        }        
+    }
+
+    /// <summary>
+    /// Dispatches on mouse exit event
+    /// </summary>
+    void OnMouseExit()
+    {
+        OnMouseExitEvent?.Invoke(this);
     }
 }
