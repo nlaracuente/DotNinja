@@ -83,10 +83,10 @@ public class GameManager : MonoBehaviour
         if(instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(this);
+            DontDestroyOnLoad(gameObject);
         } else
         {
-            Destroy(this);
+            Destroy(gameObject);
         }
     }
 
@@ -99,6 +99,23 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape)){
             Application.Quit();
         }
+    }
+
+    /// <summary>
+    /// Resets the level counter to 1 and loads the level
+    /// </summary>
+    public void StartGame()
+    {
+        m_currentLevel = 1;
+        LoadCurrentLevel();
+    }
+
+    /// <summary>
+    /// Transitions to the main menu scene
+    /// </summary>
+    public void MainMenu()
+    {
+        TransitionToScene(m_mainMenuSceneName);
     }
 
     /// <summary>
