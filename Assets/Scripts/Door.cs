@@ -51,8 +51,5 @@ public class Door : MonoBehaviour
         {
             m_renderer.sprite = m_doorOpenedSprite;
         }
-
-        // Wait to visually register the door is now opened
-        yield return new WaitForSeconds(1f);
     }
 }

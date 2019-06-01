@@ -147,8 +147,7 @@ public class PathRenderer : MonoBehaviour
     /// </summary>
     void PreviewPath()
     {
-        // Cannot previe path
-        if (IsPlayerNotAvailable())
+        if (PreventAction())
         {
             m_previewPathRenderer.positionCount = 0;
             return;
@@ -188,7 +187,7 @@ public class PathRenderer : MonoBehaviour
     /// <param name="connector"></param>
     public void OnConnectorSelected(Connector connector)
     {
-        if (IsPlayerNotAvailable())
+        if (PreventAction())
         {
             return;
         }
@@ -221,7 +220,7 @@ public class PathRenderer : MonoBehaviour
     /// <param name="connector"></param>
     public void OnConnectorDeselected(Connector connector)
     {
-        if (IsPlayerNotAvailable())
+        if (PreventAction())
         {
             return;
         }
@@ -241,7 +240,7 @@ public class PathRenderer : MonoBehaviour
     /// <param name="connector"></param>
     public void OnMouseOnConnector(Connector connector)
     {
-        if (IsPlayerNotAvailable())
+        if (PreventAction())
         {
             return;
         }
@@ -255,7 +254,7 @@ public class PathRenderer : MonoBehaviour
     /// <param name="connector"></param>
     public void OnMouseExitConnector(Connector connector)
     {
-        if (IsPlayerNotAvailable())
+        if (PreventAction())
         {
             return;
         }
@@ -267,9 +266,9 @@ public class PathRenderer : MonoBehaviour
     /// True when the player is not in a state of availability
     /// </summary>
     /// <returns></returns>
-    bool IsPlayerNotAvailable()
+    bool PreventAction()
     {
-        return m_player.IsMoving || m_player.LevelCompleted;
+        return !GameManager.instance.IsLevelLoaded || m_player.IsMoving || m_player.LevelCompleted;
     }
 
     /// <summary>

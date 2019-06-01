@@ -171,6 +171,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_previewPathRenderer: {fileID: 6513748501758804581}
   m_activePathRenderer: {fileID: 55709640196978435}
+  m_pathPendingMaterial: {fileID: 2100000, guid: 5efa9f99fdb3aef45b3d9a65943967c6,
+    type: 2}
+  m_invalidPathMaterial: {fileID: 2100000, guid: 81596fb4e1492574f96a75ad7241a333,
+    type: 2}
+  m_validPathMaterial: {fileID: 2100000, guid: 622a9ea27bebcd1479592458ac112349, type: 2}
   m_lineZPosition: 2
   m_obstacleMask:
     serializedVersion: 2

@@ -54,7 +54,7 @@ public class Player : MonoBehaviour
     /// </summary>
     private void Update()
     {
-        if (IsMoving || LevelCompleted)
+        if (PreventAction())
         {
             return;
         }
@@ -66,12 +66,21 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
+    /// True when one of the following conditions is met
+    /// </summary>
+    /// <returns></returns>
+    private bool PreventAction()
+    {
+        return !GameManager.instance.IsLevelLoaded || IsMoving || LevelCompleted;
+    }
+
+    /// <summary>
     /// Removes all active connections
     /// </summary>
     void OnMouseDown()
     {
         // Ignore when moving
-        if (IsMoving || LevelCompleted)
+        if (PreventAction())
         {
             return;
         }
