@@ -18,27 +18,9 @@ public class Player : MonoBehaviour
     float m_connectionDealy = 0.25f;
 
     /// <summary>
-    /// Where to place the Z of the line renderer's position to avoid being infront of the player
+    /// A refenece to the path renderer object
     /// </summary>
-    [SerializeField]
-    float m_lineZPosition = 2f;
-
-    /// <summary>
-    /// A reference to the line render that shows the connections to the connectors
-    /// </summary>
-    [SerializeField]
-    LineRenderer m_lineRenderer;
-
-    /// <summary>
-    /// The layer mask for obstacles that prevent connections from being made
-    /// </summary>
-    [SerializeField]
-    LayerMask m_obstacleMask;
-
-    /// <summary>
-    /// A of connectors to move towards
-    /// </summary>
-    List<Connector> m_connectors;    
+    PathRenderer m_pathRenderer;
 
     /// <summary>
     /// True while the player is moving along the connection
@@ -60,21 +42,10 @@ public class Player : MonoBehaviour
     /// </summary>
     void Start()
     {
-        m_connectors = new List<Connector>();
-
-        if(m_lineRenderer == null)
+        m_pathRenderer = FindObjectOfType<PathRenderer>();
+        if(m_pathRenderer == null)
         {
-            m_lineRenderer = GetComponentInChildren<LineRenderer>();
-        }
-        
-        // To ensure the line renderer is only showing active connections
-        // which at this point should be none
-        DrawConnections();
-
-        foreach (Connector connector in FindObjectsOfType<Connector>())
-        {
-            connector.OnSelected += OnConnectorSelected;
-            connector.OnDeselected += OnConnectorDeselected;
+            Debug.LogWarning("WARNING! Player is missing reference to path renderer");
         }
     }
 
@@ -95,119 +66,6 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
-    /// Returns true of there are no obstacles in the way of the ray
-    /// </summary>
-    /// <param name="start"></param>
-    /// <param name="end"></param>
-    /// <returns></returns>
-    bool IsConnectionPossible(Vector2 start, Vector2 end)
-    {
-        var hit = Physics2D.Linecast(start, end, m_obstacleMask);
-        return hit.collider == null;
-    }
-
-    /// <summary>
-    /// Registers the connector as a new connection when it does not exist
-    /// When the connector exist it removes everything after it
-    /// </summary>
-    /// <param name="connector"></param>
-    public void OnConnectorSelected(Connector connector)
-    {
-        if (IsMoving || LevelCompleted)
-        {
-            return;
-        }
-
-        // Last Connector
-        Connector lastConnetor = m_connectors.LastOrDefault();
-
-        // Not already on the last or not the last one on the list
-        // Then we can add or re-add it
-        if (lastConnetor == null || lastConnetor != connector)
-        {
-            // To validate the connection is good we need to line cast
-            // from either the player's current position or the last connector on the list
-            // to the connector passed in
-            Vector2 start = lastConnetor ? lastConnetor.transform.position : transform.position;
-            Vector2 end = connector.transform.position;
-
-            if (IsConnectionPossible(start, end))
-            {
-                m_connectors.Add(connector);
-            }
-        }
-
-        DrawConnections();
-    }
-
-    /// <summary>
-    /// Removes the given connector from the list of connections and anything after it
-    /// </summary>
-    /// <param name="connector"></param>
-    public void OnConnectorDeselected(Connector connector)
-    {
-        if (IsMoving || LevelCompleted)
-        {
-            return;
-        }
-
-        int index = m_connectors.LastIndexOf(connector) + 1;
-        int count = m_connectors.Count - index;
-
-        // Avoid attempting to remove beyond the last item
-        m_connectors.RemoveRange(index, count);
-
-        DrawConnections();
-    }
-
-    /// <summary>
-    /// Resets line renderer's position count to match current connection count
-    /// Adds first the player's current position and the connectors' position
-    /// Updates the line renderer to draw all new positions
-    /// </summary>
-    void DrawConnections()
-    {
-        if(m_lineRenderer == null)
-        {
-            Debug.LogWarning("WARNING! Player is missing a reference to the line renderer");
-            return;
-        }
-
-        // Reset positions to current count
-        m_lineRenderer.positionCount = m_connectors.Count + 1;
-
-        // + 1 to account for the player's position
-        Vector3[] positions = new Vector3[m_lineRenderer.positionCount];
-
-        // First position is always the player's
-        positions[0] = transform.position;
-        for (int i = 1; i <= m_connectors.Count; i++)
-        {
-            Connector connector = m_connectors[i - 1];
-            Vector3 position = new Vector3(connector.transform.position.x, connector.transform.position.y, m_lineZPosition);
-
-            // Place the Z away from the player
-            positions[i] = position;
-        }
-
-        m_lineRenderer.SetPositions(positions);
-    }
-
-    /// <summary>
-    /// Updates the position in the line renderer that represent the player's current position
-    /// </summary>
-    void UpdatePlayerPositionInLineRenderer()
-    {
-        if (m_lineRenderer == null)
-        {
-            Debug.LogWarning("WARNING! Player is missing a reference to the line renderer");
-            return;
-        }
-
-        m_lineRenderer.SetPosition(0, transform.position);
-    }
-
-    /// <summary>
     /// Removes all active connections
     /// </summary>
     void OnMouseDown()
@@ -218,18 +76,16 @@ public class Player : MonoBehaviour
             return;
         }
 
-        ClearConnections();
+        ResetConnections();
     }
 
     /// <summary>
     /// Clears all active connections and updates the line renderer
     /// </summary>
-    private void ClearConnections()
+    private void ResetConnections()
     {
-        m_connectors.Clear();
-        DrawConnections();
+        m_pathRenderer.ResetConnections();
     }
-
 
     /// <summary>
     /// Triggers the movement routine
@@ -250,9 +106,9 @@ public class Player : MonoBehaviour
     {
         IsMoving = true;
         
-        while (m_connectors.Count > 0)
+        while (m_pathRenderer.Connectors.Count > 0)
         {
-            Connector connector = m_connectors[0];
+            Connector connector = m_pathRenderer.Connectors[0];
             Vector2 destination = connector.Anchor.position;
 
             while (Vector2.Distance(transform.position, destination) > .001f)
@@ -263,7 +119,7 @@ public class Player : MonoBehaviour
                 position.z = transform.position.z;
                 transform.position = position;
 
-                UpdatePlayerPositionInLineRenderer();
+                m_pathRenderer.UpdatePlayerPositionInLineRenderer();
                 yield return new WaitForEndOfFrame();
             }
 
@@ -274,13 +130,13 @@ public class Player : MonoBehaviour
             Door door = connector.GetComponentInParent<Door>();
             if(HasKey && door != null)
             {
-                ClearConnections();
+                ResetConnections();
                 StartCoroutine(OpenDoorRoutine(door));
 
             // Re-draw connections to reflect the removed one
             } else {
-                m_connectors.RemoveAt(0);
-                DrawConnections();
+                m_pathRenderer.Connectors.RemoveAt(0);
+                m_pathRenderer.DrawConnections();
                 yield return new WaitForSeconds(m_connectionDealy);
             }
         }
