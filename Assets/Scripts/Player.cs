@@ -40,6 +40,11 @@ public class Player : MonoBehaviour
     public bool IsMoving { get; private set; }
 
     /// <summary>
+    /// True when the key has been collected
+    /// </summary>
+    public bool HasKey { get; set; }
+
+    /// <summary>
     /// Subscribes to all connectors
     /// </summary>
     void Start()

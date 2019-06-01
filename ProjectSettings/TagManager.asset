@@ -53,6 +53,9 @@ TagManager:
   - name: Rope
     uniqueID: 1611273727
     locked: 0
+  - name: Collectables
+    uniqueID: 3317440141
+    locked: 0
   - name: Player
     uniqueID: 1278840275
     locked: 0
