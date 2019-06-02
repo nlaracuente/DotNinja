@@ -47,9 +47,13 @@ public class Door : MonoBehaviour
         // Wait to visually register player reached the door
         yield return new WaitForSeconds(m_openDelay);
 
+        float length = AudioManager.instance.PlayDoorSound(transform);
         if (m_renderer != null && m_doorOpenedSprite != null)
         {
             m_renderer.sprite = m_doorOpenedSprite;
         }
+
+        // Wait for the door sounds to finish
+        yield return new WaitForSeconds(length);
     }
 }

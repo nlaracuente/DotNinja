@@ -216,6 +216,7 @@ public class GameManager : MonoBehaviour
             transitionTo = LoadCurrentLevel;
         }
 
+        AudioManager.instance.PlayLevelCompletedSound(ActivePlayer.transform);
         yield return StartCoroutine(FadeScreenAndTransitionTo(transitionTo));
 
         // Not always reset

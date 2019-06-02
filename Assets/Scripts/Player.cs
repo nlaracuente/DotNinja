@@ -149,6 +149,8 @@ public class Player : MonoBehaviour
         
         while (m_pathRenderer.Connectors.Count > 0)
         {
+            AudioManager.instance.PlayStartMovingSound(transform);
+
             Connector connector = m_pathRenderer.Connectors[0];
             Vector2 destination = connector.Anchor.position;
 
@@ -219,6 +221,8 @@ public class Player : MonoBehaviour
 
         // Disable collisions while falling
         m_rigidbody.simulated = false;
+
+        AudioManager.instance.PlayHitSound(transform);
 
         float totalFallTime = Time.time + m_fallTime;
         while (Time.time < totalFallTime)

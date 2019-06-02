@@ -45,6 +45,7 @@ public class Key : MonoBehaviour
 
             m_player.HasKey = true;
             m_isCollected = true;
+            AudioManager.instance.PlayKeySound(transform);
             Destroy(gameObject, m_pickupDelay);
         }
     }

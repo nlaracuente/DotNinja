@@ -45,7 +45,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_singleConnections: 1
   m_fadeInDelay: 1
-  m_fadeOutDelay: 0.5
+  m_fadeOutDelay: 0.25
   m_currentLevel: 1
   m_mainMenuSceneName: MainMenu
   m_levelSceneNameFormat: Level_{0}

@@ -215,6 +215,7 @@ public class PathRenderer : MonoBehaviour
 
             if (IsConnectionPossible(start, end))
             {
+                AudioManager.instance.PlayConnectSound(connector.transform);
                 Connectors.Add(connector);
             }
         }
@@ -236,8 +237,12 @@ public class PathRenderer : MonoBehaviour
         int index = Connectors.LastIndexOf(connector) + 1;
         int count = Connectors.Count - index;
 
+        if (count > 0) {
+            AudioManager.instance.PlayReleaseSound(connector.transform);
+        }
+
         // Avoid attempting to remove beyond the last item
-        Connectors.RemoveRange(index, count);
+        Connectors.RemoveRange(index, count);        
 
         DrawConnections();
     }
