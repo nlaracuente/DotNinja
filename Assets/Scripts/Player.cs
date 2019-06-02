@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
+[RequireComponent(typeof(Rigidbody2D))]
 public class Player : MonoBehaviour
 {
     /// <summary>
@@ -18,6 +19,24 @@ public class Player : MonoBehaviour
     float m_connectionDealy = 0.25f;
 
     /// <summary>
+    /// How quickly to fall
+    /// </summary>
+    [SerializeField]
+    float m_fallSpeed = 5f;
+
+    /// <summary>
+    /// How long to fall before respawning the player
+    /// </summary>
+    [SerializeField]
+    float m_fallTime = 2f;
+
+    /// <summary>
+    /// How many degrees to rotate while falling
+    /// </summary>
+    [SerializeField]
+    float m_fallSpinRate = 45f;
+
+    /// <summary>
     /// A refenece to the path renderer object
     /// </summary>
     PathRenderer m_pathRenderer;
@@ -25,23 +44,36 @@ public class Player : MonoBehaviour
     /// <summary>
     /// True while the player is moving along the connection
     /// </summary>
-    public bool IsMoving { get; private set; }
+    public bool IsMoving { get; private set; } = false;
 
     /// <summary>
     /// True when the key has been collected
     /// </summary>
-    public bool HasKey { get; set; }
+    public bool HasKey { get; set; } = false;
 
     /// <summary>
     /// True when the player reaches the door and has the key
     /// </summary>
-    public bool LevelCompleted { get; private set; }
+    public bool IsPlayerDead { get; private set; } = false;
+
+    /// <summary>
+    /// A reference to the rigidbody
+    /// </summary>
+    Rigidbody2D m_rigidbody;
+
+    /// <summary>
+    /// Holds the initial position of the player
+    /// Used to respawn the player at this position
+    /// </summary>
+    Vector3 m_initialPosition;
 
     /// <summary>
     /// Subscribes to all connectors
     /// </summary>
     void Start()
     {
+        m_initialPosition = transform.position;
+        m_rigidbody = GetComponent<Rigidbody2D>();
         m_pathRenderer = FindObjectOfType<PathRenderer>();
         if(m_pathRenderer == null)
         {
@@ -71,7 +103,7 @@ public class Player : MonoBehaviour
     /// <returns></returns>
     private bool PreventAction()
     {
-        return !GameManager.instance.IsLevelLoaded || IsMoving || LevelCompleted;
+        return IsPlayerDead && !GameManager.instance.IsLevelLoaded || IsMoving || GameManager.instance.IsLevelCompleted;
     }
 
     /// <summary>
@@ -126,10 +158,10 @@ public class Player : MonoBehaviour
 
                 // Keep the player's current Z position
                 position.z = transform.position.z;
-                transform.position = position;
+                m_rigidbody.MovePosition(position);
 
                 m_pathRenderer.UpdatePlayerPositionInLineRenderer();
-                yield return new WaitForEndOfFrame();
+                yield return new WaitForFixedUpdate();
             }
 
             transform.position = destination;
@@ -140,7 +172,7 @@ public class Player : MonoBehaviour
             if(HasKey && door != null)
             {
                 ResetConnections();
-                StartCoroutine(OpenDoorRoutine(door));
+                GameManager.instance.LevelCompleted(door);
 
             // Re-draw connections to reflect the removed one
             } else {
@@ -154,14 +186,58 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
-    /// Waits for the door to open before triggering level completed
+    /// Stops movement, resets connections, and triggers player death
     /// </summary>
-    /// <param name="door"></param>
-    /// <returns></returns>
-    IEnumerator OpenDoorRoutine(Door door)
+    /// <param name="collision"></param>
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        LevelCompleted = true;
-        yield return StartCoroutine(door.OpenRoutine());
-        GameManager.instance.LevelCompleted();
+        if (!IsPlayerDead && collision.collider.CompareTag("MovingObstacle"))
+        {
+            TriggerPlayerDeath();
+        }
+        
+    }
+
+    /// <summary>
+    /// Triggers the deaths of the player
+    /// </summary>
+    void TriggerPlayerDeath()
+    {
+        IsPlayerDead = true;
+        StopAllCoroutines();
+        ResetConnections();
+        StartCoroutine(RespawnRoutine());
+    }
+
+    /// <summary>
+    /// Handles the player falling and respawning routine
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator RespawnRoutine()
+    {
+        Vector3 targetScale = Vector3.one * 0.01f;
+
+        // Disable collisions while falling
+        m_rigidbody.simulated = false;
+
+        float totalFallTime = Time.time + m_fallTime;
+        while (Time.time < totalFallTime)
+        {
+            yield return null;
+
+            // Shrink scaling to simulate falling
+            transform.localScale = Vector3.Lerp(transform.localScale, targetScale, Time.deltaTime * m_fallSpeed);
+        }
+
+        // Reset position and scale
+        transform.position = m_initialPosition;
+        transform.localScale = Vector3.one;
+
+        // Reset Variables
+        IsMoving = false;
+        IsPlayerDead = false;
+
+        // Re-enable collisions
+        m_rigidbody.simulated = true;
     }
 }

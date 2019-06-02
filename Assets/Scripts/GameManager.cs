@@ -137,7 +137,6 @@ public class GameManager : MonoBehaviour
     {
         // Force the fader to be null in case we are tryng to reference and old one
         m_fader = null;
-
         IsLevelLoaded = false;
         IsLevelCompleted = false;
 
@@ -155,7 +154,6 @@ public class GameManager : MonoBehaviour
     /// <returns></returns>
     IEnumerator LoadLevelRoutine()
     {
-        // Wait a frame to ensure the level has loaded all the assets
         yield return StartCoroutine(Fader.FadeRoutine(1f, 0f, m_fadeInDelay));
         IsLevelLoaded = true;
     }
@@ -163,9 +161,20 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Handles the level completed sequence
     /// </summary>
-    public void LevelCompleted()
+    public void LevelCompleted(Door door)
     {
         IsLevelCompleted = true;
+        StartCoroutine(LevelCompletedRoutine(door));
+    }
+
+    /// <summary>
+    /// Plays the door animations, fades the screen, and transitions to the next level
+    /// </summary>
+    /// <param name="door"></param>
+    /// <returns></returns>
+    IEnumerator LevelCompletedRoutine(Door door)
+    {
+        yield return StartCoroutine(door.OpenRoutine());
 
         // Defaults action to credits screen
         Action transitionTo = TransitionToCredits;
@@ -178,7 +187,11 @@ public class GameManager : MonoBehaviour
             transitionTo = LoadCurrentLevel;
         }
 
-        StartCoroutine(FadeScreenAndTransitionTo(transitionTo));
+        yield return StartCoroutine(FadeScreenAndTransitionTo(transitionTo));
+
+        // Not always reset
+        // This is a temporary hack
+        IsLevelCompleted = false;
     }
 
     /// <summary>

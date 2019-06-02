@@ -3,7 +3,8 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - MovingObstacle
   layers:
   - Default
   - TransparentFX
@@ -43,6 +44,9 @@ TagManager:
     locked: 0
   - name: Floor
     uniqueID: 2219112857
+    locked: 0
+  - name: PlayerFalling
+    uniqueID: 77774167
     locked: 0
   - name: Walls
     uniqueID: 2503140857

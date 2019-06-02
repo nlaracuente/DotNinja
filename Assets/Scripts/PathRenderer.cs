@@ -284,7 +284,7 @@ public class PathRenderer : MonoBehaviour
     /// <returns></returns>
     bool PreventAction()
     {
-        return !GameManager.instance.IsLevelLoaded || m_player.IsMoving || m_player.LevelCompleted;
+        return !GameManager.instance.IsLevelLoaded || m_player.IsMoving || m_player.IsPlayerDead || GameManager.instance.IsLevelCompleted;
     }
 
     /// <summary>

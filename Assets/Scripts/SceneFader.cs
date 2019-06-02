@@ -38,6 +38,12 @@ public class SceneFader : MonoBehaviour
     [SerializeField]
     float m_defaultFadeEndDelay = .25f;
 
+    /// <summary>
+    /// For debugging as there is a bug where the screen fader never finishes
+    /// though it looks like it finishes
+    /// </summary>
+    bool m_isFading = false;
+
    /// <summary>
    /// Handles the fading routine
    /// </summary>
@@ -46,6 +52,8 @@ public class SceneFader : MonoBehaviour
    /// <returns></returns>
     public IEnumerator FadeRoutine(float start, float end, float speed = 1f)
     {
+        m_isFading = true;
+
         Color startingColor = new Color(m_fadeColor.r, m_fadeColor.g, m_fadeColor.b, start);
         m_faderImage.color = startingColor;
 
@@ -55,11 +63,10 @@ public class SceneFader : MonoBehaviour
         float increment = (end - start / speed) * Time.deltaTime;
         float current = m_faderImage.color.a;
 
-        while (Mathf.Abs(end - current) > 0.01f)
+        while (!Mathf.Approximately(current, end))
         {
             yield return new WaitForEndOfFrame();
-
-            current += increment;
+            current = Mathf.Clamp01(current + increment);
             Color newColor = new Color(m_fadeColor.r, m_fadeColor.g, m_fadeColor.b, current);
             m_faderImage.color = newColor;
         }
@@ -69,5 +76,6 @@ public class SceneFader : MonoBehaviour
         m_faderImage.color = finalColor;
 
         yield return new WaitForSeconds(m_defaultFadeEndDelay);
+        m_isFading = false;
     }
 }
