@@ -106,6 +106,7 @@ public class MovingObstacle : MonoBehaviour
         }
     }
 
+#if UNITY_EDITOR
     /// <summary>
     /// Show track nodes
     /// </summary>
@@ -137,6 +138,7 @@ public class MovingObstacle : MonoBehaviour
             }
         }
     }
+#endif
 
     IEnumerator MoveRoutine()
     {

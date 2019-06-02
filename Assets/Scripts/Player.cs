@@ -193,7 +193,7 @@ public class Player : MonoBehaviour
     {
         if (!IsPlayerDead && collision.collider.CompareTag("MovingObstacle"))
         {
-            TriggerPlayerDeath();
+            TriggerDeath();
         }
         
     }
@@ -201,7 +201,7 @@ public class Player : MonoBehaviour
     /// <summary>
     /// Triggers the deaths of the player
     /// </summary>
-    void TriggerPlayerDeath()
+    public void TriggerDeath()
     {
         IsPlayerDead = true;
         StopAllCoroutines();

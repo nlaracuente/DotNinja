@@ -71,7 +71,8 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Lazy loads the SceneFader as it changes per scene
     /// </summary>
-    SceneFader Fader {
+    SceneFader Fader
+    {
         get {
             if (m_fader == null)
             {
@@ -79,6 +80,26 @@ public class GameManager : MonoBehaviour
             }
 
             return m_fader;
+        }
+    }
+
+    /// <summary>
+    /// A reference to the current active player
+    /// </summary>
+    Player m_player;
+
+    /// <summary>
+    /// Lazy loads current player as it changes per scene
+    /// </summary>
+    public Player ActivePlayer
+    {
+        get {
+            if (m_player == null)
+            {
+                m_player = FindObjectOfType<Player>();
+            }
+
+            return m_player;
         }
     }
 
@@ -156,6 +177,14 @@ public class GameManager : MonoBehaviour
     {
         yield return StartCoroutine(Fader.FadeRoutine(1f, 0f, m_fadeInDelay));
         IsLevelLoaded = true;
+    }
+
+    /// <summary>
+    /// Triggers the player's death routine
+    /// </summary>
+    public void TriggerPlayerDeath()
+    {
+        ActivePlayer.TriggerDeath();
     }
 
     /// <summary>

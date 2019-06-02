@@ -505,7 +505,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 272919617}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2, y: 1, z: 0}
+  m_LocalPosition: {x: -1, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2009402610}
@@ -751,7 +751,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &449624607
 Transform:
   m_ObjectHideFlags: 0
@@ -1672,7 +1672,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 961127378}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2, y: -1, z: 0}
+  m_LocalPosition: {x: -1, y: -1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2009402610}
@@ -3163,7 +3163,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1966518188}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2, y: 1, z: 0}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2009402610}
@@ -3416,7 +3416,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2010012532}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2, y: -1, z: 0}
+  m_LocalPosition: {x: 0, y: -1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2009402610}
@@ -3581,7 +3581,7 @@ PrefabInstance:
     - target: {fileID: 2912341821498719343, guid: 3f6c35d09b06ec846a4254225a2984e8,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2912341821498719343, guid: 3f6c35d09b06ec846a4254225a2984e8,
         type: 3}
@@ -3638,6 +3638,16 @@ PrefabInstance:
       propertyPath: m_trackTransform
       value: 
       objectReference: {fileID: 2009402610}
+    - target: {fileID: 6495720733345839837, guid: 3f6c35d09b06ec846a4254225a2984e8,
+        type: 3}
+      propertyPath: m_movementType
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6495720733345839837, guid: 3f6c35d09b06ec846a4254225a2984e8,
+        type: 3}
+      propertyPath: m_nodeChangeDelay
+      value: 0.25
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3f6c35d09b06ec846a4254225a2984e8, type: 3}
 --- !u!1001 &680659476759968917
