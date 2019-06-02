@@ -21,16 +21,62 @@ public class AudioManager : MonoBehaviour
     AudioSource m_audioSource;
 
     /// <summary>
+    /// The prefab that enables us to play 2D sounds
+    /// </summary>
+    [SerializeField]
+    SingleShot2DAudio m_audioPrefab;
+
+    /// <summary>
+    /// Holds the currently playing effect demo
+    /// </summary>
+    SingleShot2DAudio m_demoAudio;
+
+    /// <summary>
     /// Master music volume
     /// </summary>
     [SerializeField, Range(0f, 1f)]
     float m_musicVolume = .5f;
 
     /// <summary>
+    /// Updates the current music volume
+    /// </summary>
+    public float MusicVolume
+    {
+        get { return m_musicVolume; }
+        set {
+            m_musicVolume = Mathf.Clamp01(value);
+            m_audioSource.volume = m_musicVolume;
+        }
+    }
+
+    /// <summary>
     /// Master Fxs volume
     /// </summary>
     [SerializeField, Range(0f, 1f)]
     float m_fxsVolume = .5f;
+
+    /// <summary>
+    /// Sets the effects volume
+    /// </summary>
+    public float FxVolume
+    {
+        get { return m_fxsVolume; }
+        set {
+            m_fxsVolume = Mathf.Clamp01(value);
+
+            // Avoid playing too many at one time
+            if(m_fxVolumeChangeDemoClip != null  && (m_demoAudio == null || !m_demoAudio.IsPlaying)) {
+                m_demoAudio = Instantiate(m_audioPrefab).GetComponent<SingleShot2DAudio>();
+                m_demoAudio.PlaySound(m_fxVolumeChangeDemoClip, m_fxsVolume);
+            }            
+        }
+    }
+
+    /// <summary>
+    /// The audio clip to play to show how the volume has changed
+    /// </summary>
+    [SerializeField]
+    AudioClip m_fxVolumeChangeDemoClip;
 
     /// <summary>
     /// Where to play the sound clips by default
@@ -171,9 +217,12 @@ public class AudioManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Plays the given sound clip at the given location
-    /// The volume functions as a multiplier for the master <see cref="m_fxsVolume"/> control
-    /// Where 1 is loudest and 0 is no sound
+    /// Was originally using AudioSource.PlayClipAtPoint but this makes the sound 3D and 
+    /// we were having sound level issues so we are using <see cref="SingleShot2DAudio"/> instead
+    /// However, this means we need to spawn a new object for each sound.
+    /// We could argue using object pooling here but that's for a later enhancement
+    /// 
+    /// This was change late during the jam hence why the signature is not changed
     /// </summary>
     /// <param name="clip"></param>
     /// <param name="source"></param>
@@ -184,7 +233,10 @@ public class AudioManager : MonoBehaviour
             source = DefaultAudioSourceTransform;
         }
 
-        volume = Mathf.Clamp01(volume * m_fxsVolume);
-        AudioSource.PlayClipAtPoint(clip, source.position, volume);
+        if(clip != null) {
+            volume = Mathf.Clamp01(volume * m_fxsVolume);
+            SingleShot2DAudio audio = Instantiate(m_audioPrefab).GetComponent<SingleShot2DAudio>();
+            audio.PlaySound(clip, volume);
+        }
     }
 }

@@ -14,11 +14,32 @@ public class MenuController : MonoBehaviour
     GameObject m_menuGO;
 
     /// <summary>
+    /// The volume slider for controlling the music
+    /// </summary>
+    [SerializeField]
+    VolumeSlider m_musicVolumeSlider;
+
+    /// <summary>
+    /// The sound slider for controlling the sound effects
+    /// </summary>
+    [SerializeField]
+    VolumeSlider m_fxVolumeSlider;
+
+    /// <summary>
     /// Default menu to closed
+    /// Ensures volume sliders match current volume levels
     /// </summary>
     private void Start()
     {
         ToggleMenu(false);
+
+        if (m_musicVolumeSlider != null) {
+            m_musicVolumeSlider.SetValue(AudioManager.instance.MusicVolume);
+        }
+
+        if (m_fxVolumeSlider != null) {
+            m_fxVolumeSlider.SetValue(AudioManager.instance.FxVolume);
+        }
     }
 
     /// <summary>
@@ -48,5 +69,23 @@ public class MenuController : MonoBehaviour
         if(m_menuGO != null) {
             m_menuGO.SetActive(isOpened);
         }
+    }
+
+    /// <summary>
+    /// Sets the music volume
+    /// </summary>
+    /// <param name="volume"></param>
+    public void ChangeMusicVolume(float volume)
+    {
+        AudioManager.instance.MusicVolume = volume;
+    }
+
+    /// <summary>
+    /// Sets the fx volume
+    /// </summary>
+    /// <param name="volume"></param>
+    public void ChangeFxVolume(float volume)
+    {
+        AudioManager.instance.FxVolume = volume;
     }
 }
