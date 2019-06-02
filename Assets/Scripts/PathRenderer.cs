@@ -136,7 +136,6 @@ public class PathRenderer : MonoBehaviour
         foreach (Connector connector in FindObjectsOfType<Connector>())
         {
             connector.OnSelectedEvent += OnConnectorSelected;
-            connector.OnDeselectedEvent += OnConnectorDeselected;
             connector.OnMouseOverEvent += OnMouseEnterConnector;
             connector.OnMouseExitEvent += OnMouseExitConnector;
         }
@@ -147,7 +146,7 @@ public class PathRenderer : MonoBehaviour
     /// </summary>
     void PreviewPath()
     {
-        if (PreventAction())
+        if (PreventAction() || GameManager.instance.IsGamePaused)
         {
             m_previewPathRenderer.positionCount = 0;
             return;
@@ -195,45 +194,39 @@ public class PathRenderer : MonoBehaviour
         // Last Connector
         Connector lastConnetor = Connectors.LastOrDefault();
 
-        // We are only allowing a single connection per connector
-        // and this connector is already on the list
-        if (GameManager.instance.SingleConnections && Connectors.Contains(connector))
-        {
-            // Piggy back on the conditions that prevents adding new connectors
-            lastConnetor = connector;
-        }
 
-        // Not already on the last or not the last one on the list
-        // Then we can add or re-add it
-        if (lastConnetor == null || lastConnetor != connector)
-        {
+        // A new connection trying to be added
+        if (!Connectors.Contains(connector)) {
+
             // To validate the connection is good we need to line cast
             // from either the player's current position or the last connector on the list
             // to the connector passed in
             Vector2 start = lastConnetor ? lastConnetor.transform.position : PlayerPosition;
             Vector2 end = connector.transform.position;
 
-            if (IsConnectionPossible(start, end))
-            {
+            if (IsConnectionPossible(start, end)) {
                 AudioManager.instance.PlayConnectSound(connector.transform);
                 Connectors.Add(connector);
             }
-        }
 
-        DrawConnections();
+            DrawConnections();
+
+        // An existing connection the player wants to reset their connections to
+        } else if (lastConnetor != connector) {
+            OnConnectorDeselected(connector);
+
+        // Last connector therefore player wants to move to it
+        } else {
+            m_player.Move();
+        }        
     }
 
     /// <summary>
     /// Removes the given connector from the list of connections and anything after it
     /// </summary>
     /// <param name="connector"></param>
-    public void OnConnectorDeselected(Connector connector)
+    void OnConnectorDeselected(Connector connector)
     {
-        if (PreventAction())
-        {
-            return;
-        }
-
         int index = Connectors.LastIndexOf(connector) + 1;
         int count = Connectors.Count - index;
 

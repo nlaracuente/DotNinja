@@ -82,22 +82,6 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
-    /// Checks for commitment to movement
-    /// </summary>
-    private void Update()
-    {
-        if (PreventAction())
-        {
-            return;
-        }
-
-        if (Input.GetButtonDown("Jump"))
-        {
-            Move();
-        }
-    }
-
-    /// <summary>
     /// True when one of the following conditions is met
     /// </summary>
     /// <returns></returns>
@@ -131,7 +115,7 @@ public class Player : MonoBehaviour
     /// <summary>
     /// Triggers the movement routine
     /// </summary>
-    void Move()
+    public void Move()
     {
         if (!IsMoving)
         {

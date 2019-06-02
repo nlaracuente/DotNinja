@@ -64,6 +64,11 @@ public class GameManager : MonoBehaviour
     public bool IsLevelCompleted { get; private set; } = false;
 
     /// <summary>
+    /// True when the pause menu is opened
+    /// </summary>
+    public bool IsGamePaused { get; set; } = false;
+
+    /// <summary>
     /// A reference to the current scene fader
     /// </summary>
     SceneFader m_fader;
@@ -127,11 +132,9 @@ public class GameManager : MonoBehaviour
     /// Terminates the application
     /// Todo: Remove when done debugging
     /// </summary>
-    private void Update()
+    public void QuitGame()
     {
-        if (Input.GetKeyDown(KeyCode.Escape)){
-            Application.Quit();
-        }
+        Application.Quit();
     }
 
     /// <summary>
@@ -160,6 +163,7 @@ public class GameManager : MonoBehaviour
         m_fader = null;
         IsLevelLoaded = false;
         IsLevelCompleted = false;
+        IsGamePaused = false;
 
         // Not already running
         if (m_loadLevelRoutine == null)
@@ -193,6 +197,7 @@ public class GameManager : MonoBehaviour
     public void LevelCompleted(Door door)
     {
         IsLevelCompleted = true;
+        IsGamePaused = false;
         StartCoroutine(LevelCompletedRoutine(door));
     }
 
@@ -222,6 +227,7 @@ public class GameManager : MonoBehaviour
         // Not always reset
         // This is a temporary hack
         IsLevelCompleted = false;
+        IsGamePaused = false;
     }
 
     /// <summary>

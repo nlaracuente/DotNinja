@@ -61,6 +61,14 @@ public class MenuController : MonoBehaviour
     }
 
     /// <summary>
+    /// Terminates the game
+    /// </summary>
+    public void QuitGame()
+    {
+        GameManager.instance.QuitGame();
+    }
+
+    /// <summary>
     /// Toggles the menu object to open/close
     /// </summary>
     /// <param name="isOpened"></param>
@@ -69,6 +77,8 @@ public class MenuController : MonoBehaviour
         if(m_menuGO != null) {
             m_menuGO.SetActive(isOpened);
         }
+
+        GameManager.instance.IsGamePaused = isOpened;
     }
 
     /// <summary>

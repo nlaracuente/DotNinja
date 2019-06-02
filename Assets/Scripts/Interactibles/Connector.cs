@@ -15,8 +15,6 @@ public class Connector : MonoBehaviour
 {
     public delegate void ConnectorClickedEvent(Connector connector);
     public event ConnectorClickedEvent OnSelectedEvent;
-    public event ConnectorClickedEvent OnDeselectedEvent;
-
     public event ConnectorClickedEvent OnMouseOverEvent;
     public event ConnectorClickedEvent OnMouseExitEvent;
 
@@ -174,10 +172,6 @@ public class Connector : MonoBehaviour
         {
             OnSelectedEvent?.Invoke(this);
         }
-        else if (Input.GetButtonDown("Deselect"))
-        {
-            OnDeselectedEvent?.Invoke(this);
-        }        
     }
 
     /// <summary>
