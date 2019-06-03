@@ -5,7 +5,7 @@ using UnityEngine;
 public enum ConnectorType
 {
     Normal,
-    Breakable,
+    Retractable,
 }
 
 /// <summary>
@@ -25,16 +25,16 @@ public class Connector : MonoBehaviour
     ConnectorType m_connectorType;
 
     /// <summary>
-    /// Seconds before the tile breaks
+    /// Seconds before the connector retacts
     /// </summary>
     [SerializeField]
-    float m_timeToBreak = 2f;
+    float m_timeToRetract = 1f;
 
     /// <summary>
-    /// How long after it is broken before it respawns
+    /// How long after it retracts before it resets
     /// </summary>
     [SerializeField]
-    float m_timeToRespawn = 3f;
+    float m_timeToReset = 2f;
 
     /// <summary>
     /// A reference to the sprite renderer
@@ -49,9 +49,33 @@ public class Connector : MonoBehaviour
     Transform m_anchor;
 
     /// <summary>
-    /// Uses by breakable connectors to indicate if they are broken or not
+    /// Default sprite when not hooked or connected
     /// </summary>
-    bool m_broken = false;
+    [SerializeField]
+    Sprite m_defaultSprite;
+
+    /// <summary>
+    /// Sprite when connecting with another target
+    /// </summary>
+    [SerializeField]
+    Sprite m_connectedSprite;
+
+    /// <summary>
+    /// Sprite when this is the last connection
+    /// </summary>
+    [SerializeField]
+    Sprite m_hookedSprite;
+
+    /// <summary>
+    /// Sprite to use when retracted
+    /// </summary>
+    [SerializeField]
+    Sprite m_retractedSprite;
+
+    /// <summary>
+    /// Uses by retractable connectors to indicate if they are broken or not
+    /// </summary>
+    bool m_retracted = false;
 
     /// <summary>
     /// True while the player is connected to this connector
@@ -59,9 +83,9 @@ public class Connector : MonoBehaviour
     bool m_playerConnected = false;
 
     /// <summary>
-    /// A reference to the routine for breaking
+    /// A reference to the routine for retracting
     /// </summary>
-    IEnumerator m_breakRoutine;
+    IEnumerator m_retractRoutine;
 
     /// <summary>
     /// The transform for the player to anchor to
@@ -103,13 +127,13 @@ public class Connector : MonoBehaviour
 
         m_playerConnected = true;
 
-        // Trigger break?
-        if (!m_broken && m_connectorType == ConnectorType.Breakable)
+        // Trigger retract?
+        if (!m_retracted && m_connectorType == ConnectorType.Retractable)
         {
-            if(m_breakRoutine == null)
+            if(m_retractRoutine == null)
             {
-                m_breakRoutine = BreakRoutine();
-                StartCoroutine(m_breakRoutine);
+                m_retractRoutine = RetractRoutine();
+                StartCoroutine(m_retractRoutine);
             }
         }
     }
@@ -128,18 +152,18 @@ public class Connector : MonoBehaviour
 
 
     /// <summary>
-    /// Handles the connector breaking routine
+    /// Handles the connector retracting routine
     /// </summary>
     /// <returns></returns>
-    IEnumerator BreakRoutine()
+    IEnumerator RetractRoutine()
     {
-        // Wait to break
-        yield return new WaitForSeconds(m_timeToBreak);
+        // Wait to retract
+        yield return new WaitForSeconds(m_timeToRetract);
 
-        // Break
-        m_broken = true;
+        // retract
+        m_retracted = true;
         Sprite currentSprite = m_renderer.sprite;
-        m_renderer.sprite = null;
+        m_renderer.sprite = m_retractedSprite;
 
         if (m_playerConnected)
         {
@@ -147,9 +171,10 @@ public class Connector : MonoBehaviour
         }
 
         // Respawn
-        yield return new WaitForSeconds(m_timeToRespawn);
-        m_broken = false;
+        yield return new WaitForSeconds(m_timeToReset);
+        m_retracted = false;
         m_renderer.sprite = currentSprite;
+        m_retractRoutine = null;
     }
 
 
@@ -158,10 +183,10 @@ public class Connector : MonoBehaviour
     /// If the select or deselect buttons are pressed 
     /// then it sends their respective events
     /// </summary>
-    private void OnMouseOver()
+    void OnMouseOver()
     {
         // Connector is broken, ignore it
-        if (m_broken)
+        if (m_retracted)
         {
             return;
         }
@@ -180,7 +205,7 @@ public class Connector : MonoBehaviour
     void OnMouseExit()
     {
         // Connector is broken, ignore it
-        if (m_broken)
+        if (m_retracted)
         {
             return;
         }

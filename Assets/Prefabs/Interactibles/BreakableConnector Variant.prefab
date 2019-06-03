@@ -10,7 +10,7 @@ PrefabInstance:
     - target: {fileID: 444518677342996474, guid: 96e7a467d19f60e48829aec4d87445bb,
         type: 3}
       propertyPath: m_Name
-      value: BreakableConnector
+      value: BreakableConnector Variant
       objectReference: {fileID: 0}
     - target: {fileID: 7016983923033431571, guid: 96e7a467d19f60e48829aec4d87445bb,
         type: 3}
@@ -77,11 +77,17 @@ PrefabInstance:
       propertyPath: m_renderer
       value: 
       objectReference: {fileID: 6701457258537404762}
+    - target: {fileID: 7708663210303740930, guid: 96e7a467d19f60e48829aec4d87445bb,
+        type: 3}
+      propertyPath: m_retractedSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: ef4574e7ad934c54ab775714e9cc7838,
+        type: 3}
     - target: {fileID: 80399204121706989, guid: 96e7a467d19f60e48829aec4d87445bb,
         type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: 91f1721c72388c44ab60004d54ca5ef8,
+      objectReference: {fileID: 21300000, guid: c43a3be9a8b8ccd40a95510b3d7b1d74,
         type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 96e7a467d19f60e48829aec4d87445bb, type: 3}

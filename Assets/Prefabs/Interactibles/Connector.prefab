@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7708663210303740930}
   - component: {fileID: 4960984876785523913}
   m_Layer: 0
-  m_Name: WallConnectorSprite
+  m_Name: Connector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -46,6 +46,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0ff8e27ae07ac144b3fb3af56be3822, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_connectorType: 0
+  m_timeToBreak: 1
+  m_timeToRespawn: 2
+  m_renderer: {fileID: 0}
   m_anchor: {fileID: 5488860613432785646}
 --- !u!61 &4960984876785523913
 BoxCollider2D:
@@ -98,7 +102,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2255017059726888719}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.102, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7016983923033431571}
@@ -139,9 +143,9 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1091063569
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 2
-  m_Sprite: {fileID: 21300000, guid: d7ae1309d37151644805ea0d1bb1c712, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 2571e4ad5cdd56544bdebe0a28a10b3d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -164,7 +168,7 @@ GameObject:
   m_Layer: 0
   m_Name: Anchor
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 3306451490063965843, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -176,7 +180,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4117512529306690528}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.133, z: 0}
+  m_LocalPosition: {x: 0, y: -0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7016983923033431571}

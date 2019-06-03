@@ -26,8 +26,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2210823458712617336}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: -0.04, z: 0}
+  m_LocalScale: {x: 1, y: 2, z: 1}
   m_Children:
   - {fileID: 229132778889886040}
   m_Father: {fileID: 6589250018359867327}
@@ -45,7 +45,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0ff8e27ae07ac144b3fb3af56be3822, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_connectorType: 0
+  m_timeToRetract: 1
+  m_timeToReset: 2
+  m_renderer: {fileID: 0}
   m_anchor: {fileID: 229132778889886040}
+  m_retractedSprite: {fileID: 0}
 --- !u!61 &2210823458712617337
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -84,7 +89,7 @@ GameObject:
   m_Layer: 0
   m_Name: Anchor
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 3306451490063965843, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -96,7 +101,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5103301267415092980}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.264, z: 0}
+  m_LocalPosition: {x: -0.6, y: 0.012, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1421728311594406710}
@@ -113,7 +118,7 @@ GameObject:
   - component: {fileID: 6589250018359867327}
   - component: {fileID: 7529190959669173563}
   m_Layer: 0
-  m_Name: DoorSprite
+  m_Name: Door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -148,7 +153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_renderer: {fileID: 8986011666202170107}
-  m_doorOpenedSprite: {fileID: 21300000, guid: 073b8a7c172469f43b86cfde31332ff3, type: 3}
+  m_doorOpenedSprite: {fileID: 21300000, guid: e285d995baf78e14fbaa1a14fc627aa8, type: 3}
   m_openDelay: 0.25
 --- !u!1 &8888130290243276786
 GameObject:
@@ -175,7 +180,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8888130290243276786}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.096, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 6589250018359867327}
@@ -218,7 +223,7 @@ SpriteRenderer:
   m_SortingLayerID: 1820839961
   m_SortingLayer: 5
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 9658b57f869e2e24d87971e818f4ffd8, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 33e12139c0ce75649b977d9a53773d18, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
