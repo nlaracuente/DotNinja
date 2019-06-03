@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(Rigidbody2D), typeof(SpriteRenderer))]
 public class Player : MonoBehaviour
 {
     /// <summary>
@@ -35,6 +35,11 @@ public class Player : MonoBehaviour
     /// </summary>
     [SerializeField]
     float m_fallSpinRate = 45f;
+
+    /// <summary>
+    /// A reference to the sprite renderer
+    /// </summary>
+    SpriteRenderer m_renderer;
 
     /// <summary>
     /// A refenece to the path renderer object
@@ -82,14 +87,28 @@ public class Player : MonoBehaviour
     float m_exitSpeed = 5f;
 
     /// <summary>
+    /// Layers to set the sprite renderer when falling
+    /// </summary>
+    [SerializeField]
+    int m_fallingLayer;
+
+    /// <summary>
+    /// Default sorting layer
+    /// </summary>
+    int m_defaultLayer;
+
+    /// <summary>
     /// Subscribes to all connectors
     /// </summary>
     void Start()
     {
         m_initialPosition = transform.position;
         m_rigidbody = GetComponent<Rigidbody2D>();
+        m_renderer = GetComponent<SpriteRenderer>();
         m_pathRenderer = FindObjectOfType<PathRenderer>();
-        if(m_pathRenderer == null)
+        m_defaultLayer = m_renderer.sortingLayerID;
+        m_fallingLayer = SortingLayer.NameToID("PlayerFalling");
+        if (m_pathRenderer == null)
         {
             Debug.LogWarning("WARNING! Player is missing reference to path renderer");
         }
@@ -196,7 +215,7 @@ public class Player : MonoBehaviour
             // If this is a door and we have the key then stop all further connections
             // to trigger the door animation and end of level
             Door door = connector.GetComponentInParent<Door>();
-            if(HasKey && door != null)
+            if(door != null && AllKeysCollected())
             {
                 ResetConnections();
                 GameManager.instance.LevelCompleted(door);
@@ -255,6 +274,9 @@ public class Player : MonoBehaviour
     {
         Vector3 targetScale = Vector3.one * 0.01f;
 
+        // Update the layer so that the player looks like it is falling
+        m_renderer.sortingLayerID = m_fallingLayer;
+
         // Disable collisions while falling
         m_rigidbody.simulated = false;
 
@@ -269,8 +291,12 @@ public class Player : MonoBehaviour
             transform.localScale = Vector3.Lerp(transform.localScale, targetScale, Time.deltaTime * m_fallSpeed);
         }
 
-        // Reset position and scale
+        RemoveCollectedKeys();
+
+        // Reset player
+        m_renderer.sortingLayerID = m_defaultLayer;
         transform.position = m_initialPosition;
+        transform.rotation = Quaternion.identity;
         transform.localScale = Vector3.one;
 
         // Reset Variables
@@ -301,5 +327,35 @@ public class Player : MonoBehaviour
             m_rigidbody.MovePosition(targetPosition);
             yield return null;
         }
+    }
+
+    /// <summary>
+    /// Triggers all keys to be marked as not collected
+    /// </summary>
+    void RemoveCollectedKeys()
+    {
+        // Marks all keys as not collected
+        foreach (Key key in FindObjectsOfType<Key>()) {
+            key.IsCollected = false;
+        }
+    }
+
+    /// <summary>
+    /// True when all the keys have been marked as collected
+    /// </summary>
+    /// <returns></returns>
+    bool AllKeysCollected()
+    {
+        bool collected = true;
+
+        // Marks all keys as not collected
+        foreach (Key key in FindObjectsOfType<Key>()) {
+            if (!key.IsCollected) {
+                collected = false;
+                break;
+            }
+        }
+
+        return collected;
     }
 }

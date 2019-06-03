@@ -48,6 +48,9 @@ TagManager:
   - name: PlayerFalling
     uniqueID: 77774167
     locked: 0
+  - name: Collectables
+    uniqueID: 3317440141
+    locked: 0
   - name: Walls
     uniqueID: 2503140857
     locked: 0
@@ -59,9 +62,6 @@ TagManager:
     locked: 0
   - name: Rope
     uniqueID: 1611273727
-    locked: 0
-  - name: Collectables
-    uniqueID: 3317440141
     locked: 0
   - name: Player
     uniqueID: 1278840275
