@@ -60,6 +60,36 @@ public class PathRenderer : MonoBehaviour
     bool m_mouseOnConnector = false;
 
     /// <summary>
+    /// How much to offest the cursor graphic by
+    /// </summary>
+    [SerializeField]
+    Vector2 m_cursorOffset;
+
+    /// <summary>
+    /// Default cursor to use on mouse exit
+    /// </summary>
+    [SerializeField]
+    Texture2D m_defaultCursor;
+
+    /// <summary>
+    /// Cursor for when a connector can be selected
+    /// </summary>
+    [SerializeField]
+    Texture2D m_selectConnectionCursor;
+
+    /// <summary>
+    /// Cursor for when a connector can be removed
+    /// </summary>
+    [SerializeField]
+    Texture2D m_removeConnectionCursor;
+
+    /// <summary>
+    /// Cursor for when the connector is the target (last one)
+    /// </summary>
+    [SerializeField]
+    Texture2D m_goToConnectionCursor;
+
+    /// <summary>
     /// A reference to the player component
     /// </summary>
     Player m_player;
@@ -147,6 +177,8 @@ public class PathRenderer : MonoBehaviour
         {
             m_activePathRenderer.positionCount = 0;
         }
+
+        ResetCursor();
     }
 
     /// <summary>
@@ -293,15 +325,32 @@ public class PathRenderer : MonoBehaviour
             return;
         }
 
-        // Default to true
-        m_mouseOnConnector = true;
+        
+        // Update the cursor icon based on the action that can be done
+        if (Connectors.Contains(connector)) {
+            Connector lastConnector = Connectors.LastOrDefault();
 
-        // If we are only allowing only single connections
-        // then we don't want to recognize this action if the connector is already in the list
-        if (GameManager.instance.SingleConnections && Connectors.Contains(connector))
-        {
-            m_mouseOnConnector = false;
+            // Target Connector
+            if (lastConnector == connector) {
+                Cursor.SetCursor(m_goToConnectionCursor, m_cursorOffset, CursorMode.Auto);
+
+            // Connector can be removed
+            } else {
+                Cursor.SetCursor(m_removeConnectionCursor, m_cursorOffset, CursorMode.Auto);
+            }
+        } else {
+            Cursor.SetCursor(m_selectConnectionCursor, m_cursorOffset, CursorMode.Auto);
         }
+
+        m_mouseOnConnector = true;
+    }
+
+    /// <summary>
+    /// Sets the default cursor texture
+    /// </summary>
+    public void ResetCursor()
+    {
+        Cursor.SetCursor(m_defaultCursor, m_cursorOffset, CursorMode.Auto);
     }
 
     /// <summary>
@@ -316,6 +365,7 @@ public class PathRenderer : MonoBehaviour
         }
 
         m_mouseOnConnector = false;
+        Cursor.SetCursor(m_defaultCursor, m_cursorOffset, CursorMode.Auto);
     }
 
     /// <summary>
