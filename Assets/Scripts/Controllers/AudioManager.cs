@@ -98,6 +98,9 @@ public class AudioManager : MonoBehaviour
     AudioClip m_releaseClip;
 
     [SerializeField]
+    AudioClip m_hoverClip;
+
+    [SerializeField]
     AudioClip m_keyClip;
 
     [SerializeField]
@@ -157,7 +160,7 @@ public class AudioManager : MonoBehaviour
 
     /// <summary>
     /// Plays the door opening fx
-    /// Returns the lenght of the sound clip
+    /// Returns the length of the sound clip
     /// </summary>
     /// <returns></returns>
     public float PlayDoorSound(Transform source = null)
@@ -168,7 +171,7 @@ public class AudioManager : MonoBehaviour
 
     /// <summary>
     /// Plays the hook connected to a connector fx
-    /// Returns the lenght of the sound clip
+    /// Returns the length of the sound clip
     /// </summary>
     /// <returns></returns>
     public float PlayConnectSound(Transform source = null)
@@ -179,7 +182,7 @@ public class AudioManager : MonoBehaviour
 
     /// <summary>
     /// Plays the hook removed from a connection fx
-    /// Returns the lenght of the sound clip
+    /// Returns the length of the sound clip
     /// </summary>
     /// <returns></returns>
     public float PlayReleaseSound(Transform source = null)
@@ -189,8 +192,19 @@ public class AudioManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Plays the hovering effect
+    /// Returns the length of the sound clip
+    /// </summary>
+    /// <returns></returns>
+    public float PlayHoverSound(Transform source = null)
+    {
+        PlaySoundAt(m_hoverClip, source);
+        return m_hoverClip.length;
+    }
+
+    /// <summary>
     /// Plays the key collected fx
-    /// Returns the lenght of the sound clip
+    /// Returns the length of the sound clip
     /// </summary>
     /// <returns></returns>
     public float PlayKeySound(Transform source = null)
@@ -201,7 +215,7 @@ public class AudioManager : MonoBehaviour
 
     /// <summary>
     /// Plays the player hitting an obstacle fx
-    /// Returns the lenght of the sound clip
+    /// Returns the length of the sound clip
     /// </summary>
     /// <returns></returns>
     public float PlayHitSound(Transform source = null)
@@ -212,7 +226,7 @@ public class AudioManager : MonoBehaviour
 
     /// <summary>
     /// Plays the moving to the first connector fx
-    /// Returns the lenght of the sound clip
+    /// Returns the length of the sound clip
     /// </summary>
     /// <returns></returns>
     public float PlayStartMovingSound(Transform source = null)
@@ -225,7 +239,7 @@ public class AudioManager : MonoBehaviour
 
     /// <summary>
     /// Plays the level was completed fx
-    /// Returns the lenght of the sound clip
+    /// Returns the length of the sound clip
     /// </summary>
     /// <returns></returns>
     public float PlayLevelCompletedSound(Transform source = null)

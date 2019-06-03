@@ -15,6 +15,7 @@ public class Connector : MonoBehaviour
 {
     public delegate void ConnectorClickedEvent(Connector connector);
     public event ConnectorClickedEvent OnSelectedEvent;
+    public event ConnectorClickedEvent OnMouseEnterEvent;
     public event ConnectorClickedEvent OnMouseOverEvent;
     public event ConnectorClickedEvent OnMouseExitEvent;
 
@@ -55,16 +56,34 @@ public class Connector : MonoBehaviour
     Sprite m_defaultSprite;
 
     /// <summary>
+    /// Default sprite when not hooked or connected
+    /// </summary>
+    [SerializeField]
+    Sprite m_defaultRetractableSprite;
+
+    /// <summary>
     /// Sprite when connecting with another target
     /// </summary>
     [SerializeField]
-    Sprite m_thetheredSprite;
+    Sprite m_tetheredSprite;
+
+    /// <summary>
+    /// Sprite when connecting with another target
+    /// </summary>
+    [SerializeField]
+    Sprite m_tetheredRetractableSprite;
 
     /// <summary>
     /// Sprite when this is the last connection
     /// </summary>
     [SerializeField]
     Sprite m_targetedSprite;
+
+    /// <summary>
+    /// Sprite when this is the last connection
+    /// </summary>
+    [SerializeField]
+    Sprite m_targetedRetractableSprite;
 
     /// <summary>
     /// Sprite to use when retracted
@@ -112,6 +131,8 @@ public class Connector : MonoBehaviour
         {
             m_renderer = GetComponentInChildren<SpriteRenderer>();
         }
+
+        SetDefaultSprite();
     }
 
     /// <summary>
@@ -163,7 +184,7 @@ public class Connector : MonoBehaviour
         // retract
         AudioManager.instance.PlayConnectorRetracted();
         m_retracted = true;
-        m_renderer.sprite = m_retractedSprite;
+        SetRetractedSprite();
 
         if (m_playerConnected)
         {
@@ -174,28 +195,36 @@ public class Connector : MonoBehaviour
         yield return new WaitForSeconds(m_timeToReset);
         AudioManager.instance.PlayConnectorReset();
         m_retracted = false;
-        m_renderer.sprite = m_defaultSprite;
+        SetDefaultSprite();
         m_retractRoutine = null;
     }
 
-
     /// <summary>
-    /// Dispatches on mouse over event
+    /// /// Dispatches on mouse over event
     /// If the select or deselect buttons are pressed 
     /// then it sends their respective events
     /// </summary>
-    void OnMouseOver()
+    private void OnMouseEnter()
     {
-        // Connector is broken, ignore it
-        if (m_retracted)
-        {
+        if (m_retracted) {
+            return;
+        }
+
+        OnMouseEnterEvent?.Invoke(this);
+    }
+
+    /// <summary>
+    /// Dispatch event when clickd on
+    /// </summary>
+    private void OnMouseOver()
+    {
+        if (m_retracted) {
             return;
         }
 
         OnMouseOverEvent?.Invoke(this);
 
-        if (Input.GetButtonDown("Select"))
-        {
+        if (Input.GetButtonDown("Select")) {
             OnSelectedEvent?.Invoke(this);
         }
     }
@@ -215,6 +244,26 @@ public class Connector : MonoBehaviour
     }
 
     /// <summary>
+    /// For debugging purposes to see the change in the editor only
+    /// rather than creating an editor script (call it a short cut)
+    /// </summary>
+    private void OnDrawGizmos()
+    {
+        SpriteRenderer renderer = m_renderer ?? GetComponentInChildren<SpriteRenderer>();
+
+        // Probaly the door
+        if(renderer == null) {
+            return;
+        }
+
+        if (m_connectorType == ConnectorType.Retractable) {
+            renderer.sprite = m_defaultRetractableSprite;
+        } else {
+            renderer.sprite = m_defaultSprite;
+        }
+    }
+
+    /// <summary>
     /// Sets the sprite to indicate connector is no longer part of a connection
     /// </summary>
     public void Disconnected()
@@ -227,7 +276,7 @@ public class Connector : MonoBehaviour
     /// </summary>
     public void ConnectorTethered()
     {
-        SetSprite(m_thetheredSprite);
+        SetTetheredSprite();
     }
 
     /// <summary>
@@ -235,7 +284,43 @@ public class Connector : MonoBehaviour
     /// </summary>
     public void ConnectorTargeted()
     {
-        SetSprite(m_targetedSprite);
+        SetTargetedSprite();
+    }
+
+    /// <summary>
+    /// Changes to default sprite
+    /// </summary>
+    void SetDefaultSprite()
+    {
+        Sprite sprite = m_connectorType == ConnectorType.Retractable ? m_defaultRetractableSprite : m_defaultSprite;
+        SetSprite(sprite);
+    }
+
+    /// <summary>
+    /// Changes to tethered sprite
+    /// </summary>
+    void SetTetheredSprite()
+    {
+        Sprite sprite = m_connectorType == ConnectorType.Retractable ? m_tetheredRetractableSprite : m_tetheredSprite;
+        SetSprite(sprite);
+    }
+
+    /// <summary>
+    /// Changes to tethered sprite
+    /// </summary>
+    void SetTargetedSprite()
+    {
+        Sprite sprite = m_connectorType == ConnectorType.Retractable ? m_targetedRetractableSprite : m_targetedSprite;
+        SetSprite(sprite);
+    }
+
+    /// <summary>
+    /// Changes to tethered sprite
+    /// </summary>
+    void SetRetractedSprite()
+    {
+        Sprite sprite = m_retractedSprite;
+        SetSprite(sprite);
     }
 
     /// <summary>

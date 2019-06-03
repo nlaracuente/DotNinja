@@ -49,12 +49,18 @@ MonoBehaviour:
   m_connectorType: 0
   m_timeToRetract: 1
   m_timeToReset: 2
-  m_renderer: {fileID: 0}
+  m_renderer: {fileID: 80399204121706989}
   m_anchor: {fileID: 5488860613432785646}
   m_defaultSprite: {fileID: 21300000, guid: 2571e4ad5cdd56544bdebe0a28a10b3d, type: 3}
-  m_thetheredSprite: {fileID: 21300000, guid: f14ec6d837f8de5449ca3d9c0ca4b370, type: 3}
+  m_defaultRetractableSprite: {fileID: 21300000, guid: c43a3be9a8b8ccd40a95510b3d7b1d74,
+    type: 3}
+  m_tetheredSprite: {fileID: 21300000, guid: f14ec6d837f8de5449ca3d9c0ca4b370, type: 3}
+  m_tetheredRetractableSprite: {fileID: 21300000, guid: 99636fbb53cebd345a71c40feeb40fc9,
+    type: 3}
   m_targetedSprite: {fileID: 21300000, guid: 10ac2817af8f5c54c9248850b4a6d8b4, type: 3}
-  m_retractedSprite: {fileID: 0}
+  m_targetedRetractableSprite: {fileID: 21300000, guid: 3ea128511f1f710418064d0f5cd60d31,
+    type: 3}
+  m_retractedSprite: {fileID: 21300000, guid: ef4574e7ad934c54ab775714e9cc7838, type: 3}
 --- !u!61 &4960984876785523913
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -147,7 +153,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1091063569
-  m_SortingLayer: 4
+  m_SortingLayer: 8
   m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: 2571e4ad5cdd56544bdebe0a28a10b3d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

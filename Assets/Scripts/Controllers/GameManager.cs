@@ -221,8 +221,8 @@ public class GameManager : MonoBehaviour
             transitionTo = LoadCurrentLevel;
         }
 
-        float length = AudioManager.instance.PlayLevelCompletedSound(ActivePlayer.transform);
-        StartCoroutine(ActivePlayer.LevelCompletedAnimationRoutine(length));
+        AudioManager.instance.PlayLevelCompletedSound(ActivePlayer.transform);
+        StartCoroutine(ActivePlayer.LevelCompletedAnimationRoutine());
 
         yield return StartCoroutine(FadeScreenAndTransitionTo(transitionTo));
 

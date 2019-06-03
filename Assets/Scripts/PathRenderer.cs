@@ -148,7 +148,7 @@ public class PathRenderer : MonoBehaviour
     /// Clears active connections
     /// Removes all positions from the active path renderer
     /// </summary>
-    public void ResetConnections(bool isTethered = false)
+    public void ResetConnections(bool isTethered = false, Door door = null)
     {
         // When tethered we need to skip the first connection
         // since the player is hanging from it
@@ -158,7 +158,11 @@ public class PathRenderer : MonoBehaviour
         // Let's play the sound
         if( (isTethered && Connectors.Count > 1) || 
             (!isTethered && Connectors.Count > 0) ) {
-            AudioManager.instance.PlayReleaseSound();
+
+            // Is triggered after reaching the door
+            if(door == null) {
+                AudioManager.instance.PlayConnectSound();
+            }
         }
 
         for (int i = index; i < Connectors.Count; i++) {
@@ -189,7 +193,8 @@ public class PathRenderer : MonoBehaviour
         foreach (Connector connector in FindObjectsOfType<Connector>())
         {
             connector.OnSelectedEvent += OnConnectorSelected;
-            connector.OnMouseOverEvent += OnMouseEnterConnector;
+            connector.OnMouseEnterEvent += OnMouseEnterConnector;
+            connector.OnMouseOverEvent += OnMouseOverConnector;
             connector.OnMouseExitEvent += OnMouseExitConnector;
         }
     }
@@ -294,7 +299,7 @@ public class PathRenderer : MonoBehaviour
         int count = Connectors.Count - index;
 
         if (count > 0) {
-            AudioManager.instance.PlayReleaseSound(connector.transform);
+            AudioManager.instance.PlayConnectSound(connector.transform);
         }
 
         // Get a list of all the connectors about to be removed 
@@ -316,6 +321,7 @@ public class PathRenderer : MonoBehaviour
 
     /// <summary>
     /// Updates <see cref="m_mouseOnConnector"/> to true
+    /// Plays hover sound
     /// </summary>
     /// <param name="connector"></param>
     public void OnMouseEnterConnector(Connector connector)
@@ -325,7 +331,32 @@ public class PathRenderer : MonoBehaviour
             return;
         }
 
-        
+        AudioManager.instance.PlayHoverSound();
+        UpdateCursorOnConnector(connector);
+        m_mouseOnConnector = true;
+    }
+
+    /// <summary>
+    /// Updates <see cref="m_mouseOnConnector"/> to true
+    /// And the cursor
+    /// </summary>
+    /// <param name="connector"></param>
+    public void OnMouseOverConnector(Connector connector)
+    {
+        if (PreventAction()) {
+            return;
+        }
+
+        UpdateCursorOnConnector(connector);
+        m_mouseOnConnector = true;
+    }
+
+    /// <summary>
+    /// Changes the cursor over the connector to indicate what action is allowed
+    /// </summary>
+    /// <param name="connector"></param>
+    void UpdateCursorOnConnector(Connector connector)
+    {
         // Update the cursor icon based on the action that can be done
         if (Connectors.Contains(connector)) {
             Connector lastConnector = Connectors.LastOrDefault();
@@ -334,15 +365,13 @@ public class PathRenderer : MonoBehaviour
             if (lastConnector == connector) {
                 Cursor.SetCursor(m_goToConnectionCursor, m_cursorOffset, CursorMode.Auto);
 
-            // Connector can be removed
+                // Connector can be removed
             } else {
                 Cursor.SetCursor(m_removeConnectionCursor, m_cursorOffset, CursorMode.Auto);
             }
         } else {
             Cursor.SetCursor(m_selectConnectionCursor, m_cursorOffset, CursorMode.Auto);
         }
-
-        m_mouseOnConnector = true;
     }
 
     /// <summary>

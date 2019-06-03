@@ -94,8 +94,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_pickupDelay: 0.05
-  m_minSize: 1
-  m_maxSize: 1.25
+  m_minSize: 0.9
+  m_maxSize: 1
   m_growSpeed: 3
 --- !u!61 &6725670053414891380
 BoxCollider2D:
@@ -114,7 +114,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0

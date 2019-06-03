@@ -87,6 +87,12 @@ public class Player : MonoBehaviour
     float m_exitSpeed = 5f;
 
     /// <summary>
+    /// How long to take while exiting
+    /// </summary>
+    [SerializeField]
+    float m_exitTime = 2f;
+
+    /// <summary>
     /// Layers to set the sprite renderer when falling
     /// </summary>
     [SerializeField]
@@ -140,10 +146,10 @@ public class Player : MonoBehaviour
     /// <summary>
     /// Clears all active connections and updates the line renderer
     /// </summary>
-    private void ResetConnections(bool isTethered = false)
+    private void ResetConnections(bool isTethered = false, Door door = null)
     {
         // Notify if the player is tethered or not
-        m_pathRenderer.ResetConnections(isTethered);
+        m_pathRenderer.ResetConnections(isTethered, null);
     }
 
     /// <summary>
@@ -164,9 +170,9 @@ public class Player : MonoBehaviour
     IEnumerator MoveRoutine()
     {
         IsMoving = true;
-
         m_pathRenderer.ResetCursor();
-        
+        AudioManager.instance.PlayReleaseSound(transform);
+
         while (m_pathRenderer.Connectors.Count > 0)
         {
             Connector connector = m_pathRenderer.Connectors[0];
@@ -199,9 +205,12 @@ public class Player : MonoBehaviour
 
             // HACKS!
             // Reset rotation
-            // Except when connected on the top rows
-            if (transform.position.y <= 0 ) {
+
+            // Landed on the bottom row or the door
+            if (transform.position.y <= 1 ) {
                 transform.rotation = Quaternion.identity;
+
+            // Landed on the top row
             } else {
                 transform.rotation = Quaternion.Euler(0f, 0f, 180f);
             }
@@ -220,7 +229,7 @@ public class Player : MonoBehaviour
            
             if(door != null && AllKeysCollected())
             {
-                ResetConnections();
+                ResetConnections(false, door);
                 GameManager.instance.LevelCompleted(door);
 
             // Re-draw connections to reflect the removed one
@@ -254,6 +263,7 @@ public class Player : MonoBehaviour
     {
         if (!IsPlayerDead && collision.collider.CompareTag("MovingObstacle"))
         {
+            AudioManager.instance.PlayHitSound(transform);
             TriggerDeath();
         }
         
@@ -286,7 +296,7 @@ public class Player : MonoBehaviour
         // Disable collisions while falling
         m_rigidbody.simulated = false;
 
-        AudioManager.instance.PlayHitSound(transform);
+        AudioManager.instance.PlayReleaseSound(transform);
 
         float totalFallTime = Time.time + m_fallTime;
         while (Time.time < totalFallTime)
@@ -316,11 +326,10 @@ public class Player : MonoBehaviour
     /// <summary>
     /// Makes the player move to the right while he laughs/exits the level
     /// </summary>
-    /// <param name="length"></param>
     /// <returns></returns>
-    public IEnumerator LevelCompletedAnimationRoutine(float length)
+    public IEnumerator LevelCompletedAnimationRoutine()
     {
-        float targetTime = Time.time + length;
+        float targetTime = Time.time + m_exitTime;
 
         // Mak the player move
         while (Time.time < targetTime) {

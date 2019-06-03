@@ -26,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2210823458712617336}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.04, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 2, z: 1}
   m_Children:
   - {fileID: 229132778889886040}
@@ -50,6 +50,12 @@ MonoBehaviour:
   m_timeToReset: 2
   m_renderer: {fileID: 0}
   m_anchor: {fileID: 229132778889886040}
+  m_defaultSprite: {fileID: 0}
+  m_defaultRetractableSprite: {fileID: 0}
+  m_tetheredSprite: {fileID: 0}
+  m_tetheredRetractableSprite: {fileID: 0}
+  m_targetedSprite: {fileID: 0}
+  m_targetedRetractableSprite: {fileID: 0}
   m_retractedSprite: {fileID: 0}
 --- !u!61 &2210823458712617337
 BoxCollider2D:
@@ -101,7 +107,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5103301267415092980}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.6, y: 0.012, z: 0}
+  m_LocalPosition: {x: -0.5, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1421728311594406710}
@@ -221,7 +227,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1820839961
-  m_SortingLayer: 5
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 33e12139c0ce75649b977d9a53773d18, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
