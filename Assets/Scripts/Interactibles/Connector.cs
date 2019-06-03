@@ -344,11 +344,9 @@ public class Connector : MonoBehaviour
     /// <param name="sprite"></param>
     void SetSprite(Sprite sprite)
     {
-        Debug.Log("Attempting to set " + name + " to sprite: " + sprite);
         // Ingore during a retraction routine
         if (!IsRetracted && m_renderer && sprite) {
             m_renderer.sprite = sprite;
-            Debug.Log("Successful");
         }
     }
 }
