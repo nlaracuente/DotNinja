@@ -213,9 +213,6 @@ public class PathRenderer : MonoBehaviour
         Vector2 start = lastConnetor ? lastConnetor.transform.position : PlayerPosition;
         Vector2 end = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-        float distance = Vector3.Distance(start, end);
-        m_previewPathRenderer.material.mainTextureScale = new Vector2(distance * 2, 1f);
-
         // Set the positions
         m_previewPathRenderer.positionCount = 2;
         m_previewPathRenderer.SetPositions( new Vector3[] {start, end} );
@@ -233,6 +230,9 @@ public class PathRenderer : MonoBehaviour
                 m_previewPathRenderer.material = m_invalidPathMaterial;
             }
         }
+
+        float distance = Vector3.Distance(start, end);
+        m_previewPathRenderer.material.mainTextureScale = new Vector2(distance * 2, 1f);
     }
 
     /// <summary>

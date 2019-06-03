@@ -51,20 +51,20 @@ TagManager:
   - name: Walls
     uniqueID: 2503140857
     locked: 0
-  - name: ActivePath
-    uniqueID: 447767701
-    locked: 0
-  - name: Connectors
-    uniqueID: 3203903727
-    locked: 0
   - name: Door
     uniqueID: 1820839961
     locked: 0
   - name: Rope
     uniqueID: 1611273727
     locked: 0
+  - name: ActivePath
+    uniqueID: 447767701
+    locked: 0
   - name: Collectables
     uniqueID: 3317440141
+    locked: 0
+  - name: Connectors
+    uniqueID: 3203903727
     locked: 0
   - name: Player
     uniqueID: 1278840275
