@@ -164,6 +164,8 @@ public class Player : MonoBehaviour
     IEnumerator MoveRoutine()
     {
         IsMoving = true;
+
+        m_pathRenderer.ResetCursor();
         
         while (m_pathRenderer.Connectors.Count > 0)
         {
@@ -206,15 +208,16 @@ public class Player : MonoBehaviour
             
             transform.position = destination;
 
-            // Detache rope
-            // Unless this is the last on the list
-            if (m_pathRenderer.Connectors.Count > 1) {
-                connector.Disconnected();
-            }
-
             // If this is a door and we have the key then stop all further connections
             // to trigger the door animation and end of level
             Door door = connector.GetComponentInParent<Door>();
+
+            // Detache rope
+            // Unless this is the last connector on the list, excluding the door
+            if (door != null || m_pathRenderer.Connectors.Count > 1) {
+                connector.Disconnected();
+            }
+           
             if(door != null && AllKeysCollected())
             {
                 ResetConnections();
@@ -225,7 +228,8 @@ public class Player : MonoBehaviour
 
                 // Last connection we want to not remove and leave it as a "target"
                 // So that the icon remains as "targeted"
-                if(m_pathRenderer.Connectors.Count == 1) {
+                // Except when this is the door, we want the door connection removed
+                if(door == null && m_pathRenderer.Connectors.Count == 1) {
                     connector.ConnectorTargeted();
                     break;
                 } else {
@@ -273,6 +277,8 @@ public class Player : MonoBehaviour
     IEnumerator RespawnRoutine()
     {
         Vector3 targetScale = Vector3.one * 0.01f;
+
+        m_pathRenderer.ResetCursor();
 
         // Update the layer so that the player looks like it is falling
         m_renderer.sortingLayerID = m_fallingLayer;
