@@ -107,7 +107,21 @@ public class AudioManager : MonoBehaviour
     AudioClip m_startMovingClip;
 
     [SerializeField]
+    AudioClip[] m_movingClips;
+
+    [SerializeField]
     AudioClip m_levelCompletedClip;
+
+    [SerializeField]
+    AudioClip m_connectorRetracted;
+
+    [SerializeField]
+    AudioClip m_connectorReset;
+
+    /// <summary>
+    /// Random generator
+    /// </summary>
+    Random m_random;
 
     /// <summary>
     /// Creates the singleton instance
@@ -137,6 +151,8 @@ public class AudioManager : MonoBehaviour
         // Ensures the music always plays from the top
         m_audioSource.Stop();
         m_audioSource.Play();
+
+        m_random = new Random();
     }
 
     /// <summary>
@@ -201,8 +217,10 @@ public class AudioManager : MonoBehaviour
     /// <returns></returns>
     public float PlayStartMovingSound(Transform source = null)
     {
-        PlaySoundAt(m_startMovingClip, source);
-        return m_startMovingClip.length;
+        int index = Random.Range(0, m_movingClips.Length);
+        AudioClip clip = m_movingClips[index];
+        PlaySoundAt(clip, source);
+        return clip.length;
     }
 
     /// <summary>
@@ -214,6 +232,28 @@ public class AudioManager : MonoBehaviour
     {
         PlaySoundAt(m_levelCompletedClip, source);
         return m_levelCompletedClip.length;
+    }
+
+    /// <summary>
+    /// Plays the sound for when a connector retracts
+    /// </summary>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public float PlayConnectorRetracted(Transform source = null)
+    {
+        PlaySoundAt(m_connectorRetracted, source);
+        return m_connectorRetracted.length;
+    }
+
+    /// <summary>
+    /// Plays the sound for when a connector resets
+    /// </summary>
+    /// <param name="source"></param>
+    /// <returns></returns>
+    public float PlayConnectorReset(Transform source = null)
+    {
+        PlaySoundAt(m_connectorReset, source);
+        return m_connectorReset.length;
     }
 
     /// <summary>

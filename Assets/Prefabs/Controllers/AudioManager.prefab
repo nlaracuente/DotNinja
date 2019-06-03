@@ -142,7 +142,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_audioPrefab: {fileID: -2053184898039631452, guid: 82badd7d6a5d4f142aa3ad1460762735,
     type: 3}
-  m_musicVolume: 0.25
+  m_musicVolume: 0.1
   m_fxsVolume: 0.75
   m_fxVolumeChangeDemoClip: {fileID: 8300000, guid: 69049c6ab8a755943896064a32e3a2f5,
     type: 3}
@@ -153,5 +153,12 @@ MonoBehaviour:
   m_keyClip: {fileID: 8300000, guid: 3a980e0337a3c20469851a11bec757b8, type: 3}
   m_hitClip: {fileID: 8300000, guid: 0a6c69f61d09053478640374c74f28c2, type: 3}
   m_startMovingClip: {fileID: 8300000, guid: ce45b8bb5b406394a9bde80d70fec64b, type: 3}
+  m_movingClips:
+  - {fileID: 8300000, guid: 78a91d743d5974c45888233f5a4708fc, type: 3}
+  - {fileID: 8300000, guid: df43f3032bc5557499d0fb9d21053667, type: 3}
+  - {fileID: 8300000, guid: 64e3887f03ae75143954649e8b8100fb, type: 3}
   m_levelCompletedClip: {fileID: 8300000, guid: e31dd25b8f2ac624b8f337ea561fb956,
     type: 3}
+  m_connectorRetracted: {fileID: 8300000, guid: a9fb480e37447df498f3ea50dceb210d,
+    type: 3}
+  m_connectorReset: {fileID: 8300000, guid: eab75852523ccd743b31c98d4b948195, type: 3}

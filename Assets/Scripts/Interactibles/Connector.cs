@@ -161,6 +161,7 @@ public class Connector : MonoBehaviour
         yield return new WaitForSeconds(m_timeToRetract);
 
         // retract
+        AudioManager.instance.PlayConnectorRetracted();
         m_retracted = true;
         m_renderer.sprite = m_retractedSprite;
 
@@ -171,6 +172,7 @@ public class Connector : MonoBehaviour
 
         // Respawn
         yield return new WaitForSeconds(m_timeToReset);
+        AudioManager.instance.PlayConnectorReset();
         m_retracted = false;
         m_renderer.sprite = m_defaultSprite;
         m_retractRoutine = null;
