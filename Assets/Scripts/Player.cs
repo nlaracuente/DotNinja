@@ -101,15 +101,16 @@ public class Player : MonoBehaviour
             return;
         }
 
-        ResetConnections();
+        ResetConnections(transform.position != m_initialPosition);
     }
 
     /// <summary>
     /// Clears all active connections and updates the line renderer
     /// </summary>
-    private void ResetConnections()
+    private void ResetConnections(bool isTethered = false)
     {
-        m_pathRenderer.ResetConnections();
+        // Notify if the player is tethered or not
+        m_pathRenderer.ResetConnections(isTethered);
     }
 
     /// <summary>
@@ -133,10 +134,16 @@ public class Player : MonoBehaviour
         
         while (m_pathRenderer.Connectors.Count > 0)
         {
-            AudioManager.instance.PlayStartMovingSound(transform);
-
             Connector connector = m_pathRenderer.Connectors[0];
             Vector2 destination = connector.Anchor.position;
+            bool skipDelay = false;
+
+            // Already there then don't play the sound
+            // This is a side effect of not removing the last connector to keep the sprite that shows it is connected
+            if (transform.position != connector.Anchor.position) {
+                skipDelay = true;
+                AudioManager.instance.PlayStartMovingSound(transform);
+            }
 
             while (Vector2.Distance(transform.position, destination) > .001f)
             {
@@ -152,6 +159,12 @@ public class Player : MonoBehaviour
 
             transform.position = destination;
 
+            // Detache rope
+            // Unless this is the last on the list
+            if (m_pathRenderer.Connectors.Count > 1) {
+                connector.Disconnected();
+            }
+
             // If this is a door and we have the key then stop all further connections
             // to trigger the door animation and end of level
             Door door = connector.GetComponentInParent<Door>();
@@ -162,9 +175,20 @@ public class Player : MonoBehaviour
 
             // Re-draw connections to reflect the removed one
             } else {
-                m_pathRenderer.Connectors.RemoveAt(0);
-                m_pathRenderer.DrawConnections();
-                yield return new WaitForSeconds(m_connectionDealy);
+
+                // Last connection we want to not remove and leave it as a "target"
+                // So that the icon remains as "targeted"
+                if(m_pathRenderer.Connectors.Count == 1) {
+                    connector.ConnectorTargeted();
+                    break;
+                } else {
+                    m_pathRenderer.Connectors.RemoveAt(0);
+                    m_pathRenderer.DrawConnections();
+
+                    if (!skipDelay) {
+                        yield return new WaitForSeconds(m_connectionDealy);
+                    }
+                }
             }
         }
 

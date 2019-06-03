@@ -58,13 +58,13 @@ public class Connector : MonoBehaviour
     /// Sprite when connecting with another target
     /// </summary>
     [SerializeField]
-    Sprite m_connectedSprite;
+    Sprite m_thetheredSprite;
 
     /// <summary>
     /// Sprite when this is the last connection
     /// </summary>
     [SerializeField]
-    Sprite m_hookedSprite;
+    Sprite m_targetedSprite;
 
     /// <summary>
     /// Sprite to use when retracted
@@ -162,7 +162,6 @@ public class Connector : MonoBehaviour
 
         // retract
         m_retracted = true;
-        Sprite currentSprite = m_renderer.sprite;
         m_renderer.sprite = m_retractedSprite;
 
         if (m_playerConnected)
@@ -173,7 +172,7 @@ public class Connector : MonoBehaviour
         // Respawn
         yield return new WaitForSeconds(m_timeToReset);
         m_retracted = false;
-        m_renderer.sprite = currentSprite;
+        m_renderer.sprite = m_defaultSprite;
         m_retractRoutine = null;
     }
 
@@ -211,5 +210,41 @@ public class Connector : MonoBehaviour
         }
 
         OnMouseExitEvent?.Invoke(this);
+    }
+
+    /// <summary>
+    /// Sets the sprite to indicate connector is no longer part of a connection
+    /// </summary>
+    public void Disconnected()
+    {
+        SetSprite(m_defaultSprite);
+    }
+
+    /// <summary>
+    /// Updates the sprite to indicate connector is tethered to another connector
+    /// </summary>
+    public void ConnectorTethered()
+    {
+        SetSprite(m_thetheredSprite);
+    }
+
+    /// <summary>
+    /// Updates the sprite to indicate connector is the last one on the connections
+    /// </summary>
+    public void ConnectorTargeted()
+    {
+        SetSprite(m_targetedSprite);
+    }
+
+    /// <summary>
+    /// Sets the given sprite so long as we can
+    /// </summary>
+    /// <param name="sprite"></param>
+    void SetSprite(Sprite sprite)
+    {
+        // Ingore during a retraction routine
+        if (!m_retracted && m_renderer && sprite) {
+            m_renderer.sprite = sprite;
+        }   
     }
 }
