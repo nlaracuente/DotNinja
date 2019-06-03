@@ -444,7 +444,6 @@ public class PathRenderer : MonoBehaviour
 
         // Make sure the last one is set to targeted
         Connector lastConnetor = Connectors.LastOrDefault();
-        Debug.Log("Last Connector: " + lastConnetor);
         if (lastConnetor != null) {
             lastConnetor.ConnectorTargeted();
         }
