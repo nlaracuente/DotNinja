@@ -193,6 +193,7 @@ public class PathRenderer : MonoBehaviour
         foreach (Connector connector in FindObjectsOfType<Connector>())
         {
             connector.OnSelectedEvent += OnConnectorSelected;
+            connector.OnDeselectedEvent += OnConnectorDeselected;
             connector.OnMouseEnterEvent += OnMouseEnterConnector;
             connector.OnMouseOverEvent += OnMouseOverConnector;
             connector.OnMouseExitEvent += OnMouseExitConnector;
@@ -255,7 +256,6 @@ public class PathRenderer : MonoBehaviour
         // Last Connector
         Connector lastConnetor = Connectors.LastOrDefault();
 
-
         // A new connection trying to be added
         if (!Connectors.Contains(connector)) {
 
@@ -268,13 +268,6 @@ public class PathRenderer : MonoBehaviour
             if (IsConnectionPossible(start, end)) {
                 AudioManager.instance.PlayConnectSound(connector.transform);
                 Connectors.Add(connector);
-
-                //// Update the connectors to show where in the connection they are at
-                //if (lastConnetor) {
-                //    lastConnetor.ConnectorTethered();
-                //}
-                
-                //connector.ConnectorTargeted();
             }
 
             DrawConnections();
@@ -295,6 +288,12 @@ public class PathRenderer : MonoBehaviour
     /// <param name="connector"></param>
     void OnConnectorDeselected(Connector connector)
     {
+        // Already removed
+        if (!Connectors.Contains(connector)) {
+            connector.Disconnected();
+            return;
+        }
+
         int index = Connectors.LastIndexOf(connector) + 1;
         int count = Connectors.Count - index;
 
@@ -309,12 +308,6 @@ public class PathRenderer : MonoBehaviour
 
         // Avoid attempting to remove beyond the last item
         Connectors.RemoveRange(index, count);
-
-        //// Update the last connector as the new target one
-        //Connector lastConnetor = Connectors.LastOrDefault();
-        //if (lastConnetor) {
-        //    lastConnetor.ConnectorTargeted();
-        //}
 
         DrawConnections();
     }
@@ -446,15 +439,14 @@ public class PathRenderer : MonoBehaviour
 
             // Place the Z away from the player
             positions[i] = position;
+            connector.ConnectorTethered();
+        }
 
-            // Update the connector to reflect its position on the list
-            if (i + 1 <= Connectors.Count) {
-                connector.ConnectorTethered();
-
-            // Last one
-            } else {
-                connector.ConnectorTargeted();
-            }            
+        // Make sure the last one is set to targeted
+        Connector lastConnetor = Connectors.LastOrDefault();
+        Debug.Log("Last Connector: " + lastConnetor);
+        if (lastConnetor != null) {
+            lastConnetor.ConnectorTargeted();
         }
 
         m_activePathRenderer.SetPositions(positions);

@@ -15,6 +15,7 @@ public class Connector : MonoBehaviour
 {
     public delegate void ConnectorClickedEvent(Connector connector);
     public event ConnectorClickedEvent OnSelectedEvent;
+    public event ConnectorClickedEvent OnDeselectedEvent;
     public event ConnectorClickedEvent OnMouseEnterEvent;
     public event ConnectorClickedEvent OnMouseOverEvent;
     public event ConnectorClickedEvent OnMouseExitEvent;
@@ -24,6 +25,7 @@ public class Connector : MonoBehaviour
     /// </summary>
     [SerializeField]
     ConnectorType m_connectorType;
+    public bool IsRetractable { get { return m_connectorType == ConnectorType.Retractable; } }
 
     /// <summary>
     /// Seconds before the connector retacts
@@ -94,7 +96,7 @@ public class Connector : MonoBehaviour
     /// <summary>
     /// Uses by retractable connectors to indicate if they are broken or not
     /// </summary>
-    bool m_retracted = false;
+    public bool IsRetracted { get; private set; } = false;
 
     /// <summary>
     /// True while the player is connected to this connector
@@ -147,15 +149,15 @@ public class Connector : MonoBehaviour
         }
 
         m_playerConnected = true;
+    }
 
-        // Trigger retract?
-        if (!m_retracted && m_connectorType == ConnectorType.Retractable)
-        {
-            if(m_retractRoutine == null)
-            {
-                m_retractRoutine = RetractRoutine();
-                StartCoroutine(m_retractRoutine);
-            }
+    /// <summary>
+    /// Triggers the routine that makes this connector retract
+    /// </summary>
+    public void TriggerRetractRoutine()
+    {
+        if (!IsRetracted && m_connectorType == ConnectorType.Retractable) {
+            StartCoroutine(RetractRoutine());
         }
     }
 
@@ -183,20 +185,34 @@ public class Connector : MonoBehaviour
 
         // retract
         AudioManager.instance.PlayConnectorRetracted();
-        m_retracted = true;
+        IsRetracted = true;
+
         SetRetractedSprite();
 
         if (m_playerConnected)
         {
+            Debug.Log("Player is connected to " + this + ". Trigger death ");
             GameManager.instance.TriggerPlayerDeath();
         }
+
+        // Remove this connector from the list of available connectors
+        RemoveConnector();
 
         // Respawn
         yield return new WaitForSeconds(m_timeToReset);
         AudioManager.instance.PlayConnectorReset();
-        m_retracted = false;
+        IsRetracted = false;
         SetDefaultSprite();
         m_retractRoutine = null;
+    }
+
+    /// <summary>
+    /// Distpaches event to remove this connector
+    /// This is a forced remove the connector is invoking
+    /// </summary>
+    void RemoveConnector()
+    {
+        OnDeselectedEvent?.Invoke(this);
     }
 
     /// <summary>
@@ -206,7 +222,7 @@ public class Connector : MonoBehaviour
     /// </summary>
     private void OnMouseEnter()
     {
-        if (m_retracted) {
+        if (IsRetracted) {
             return;
         }
 
@@ -218,7 +234,7 @@ public class Connector : MonoBehaviour
     /// </summary>
     private void OnMouseOver()
     {
-        if (m_retracted) {
+        if (IsRetracted) {
             return;
         }
 
@@ -235,7 +251,7 @@ public class Connector : MonoBehaviour
     void OnMouseExit()
     {
         // Connector is broken, ignore it
-        if (m_retracted)
+        if (IsRetracted)
         {
             return;
         }
@@ -268,7 +284,7 @@ public class Connector : MonoBehaviour
     /// </summary>
     public void Disconnected()
     {
-        SetSprite(m_defaultSprite);
+        SetDefaultSprite();
     }
 
     /// <summary>
@@ -319,8 +335,7 @@ public class Connector : MonoBehaviour
     /// </summary>
     void SetRetractedSprite()
     {
-        Sprite sprite = m_retractedSprite;
-        SetSprite(sprite);
+        m_renderer.sprite = m_retractedSprite;
     }
 
     /// <summary>
@@ -329,9 +344,11 @@ public class Connector : MonoBehaviour
     /// <param name="sprite"></param>
     void SetSprite(Sprite sprite)
     {
+        Debug.Log("Attempting to set " + name + " to sprite: " + sprite);
         // Ingore during a retraction routine
-        if (!m_retracted && m_renderer && sprite) {
+        if (!IsRetracted && m_renderer && sprite) {
             m_renderer.sprite = sprite;
-        }   
+            Debug.Log("Successful");
+        }
     }
 }

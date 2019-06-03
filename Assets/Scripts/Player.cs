@@ -177,12 +177,12 @@ public class Player : MonoBehaviour
         {
             Connector connector = m_pathRenderer.Connectors[0];
             Vector2 destination = connector.Anchor.position;
-            bool skipDelay = false;
+            bool skipDelay = true;
 
-            // Already there then don't play the sound
+            // When we are already there then don't play the sound
             // This is a side effect of not removing the last connector to keep the sprite that shows it is connected
             if (transform.position != connector.Anchor.position) {
-                skipDelay = true;
+                skipDelay = false;
                 AudioManager.instance.PlayStartMovingSound(transform);
             }
 
@@ -201,6 +201,14 @@ public class Player : MonoBehaviour
 
                 m_pathRenderer.UpdatePlayerPositionInLineRenderer();
                 yield return new WaitForFixedUpdate();
+
+                // If moving to a retractable one and it retracts
+                // Then we want to trigger a fall
+                // Wait for the death to be registered
+                if (connector.IsRetracted) {
+                    TriggerDeath();
+                    yield return new WaitForEndOfFrame();
+                }
             }
 
             // HACKS!
@@ -217,38 +225,34 @@ public class Player : MonoBehaviour
             
             transform.position = destination;
 
+            // Now that the player has landed we can trigger this routine
+            connector.TriggerRetractRoutine();
+
             // If this is a door and we have the key then stop all further connections
             // to trigger the door animation and end of level
             Door door = connector.GetComponentInParent<Door>();
 
-            // Detache rope
-            // Unless this is the last connector on the list, excluding the door
-            if (door != null || m_pathRenderer.Connectors.Count > 1) {
-                connector.Disconnected();
-            }
-           
-            if(door != null && AllKeysCollected())
-            {
+            // Reached the door with the key
+            if (door != null && AllKeysCollected()) {
                 ResetConnections(false, door);
                 GameManager.instance.LevelCompleted(door);
+                break;
+            }
 
-            // Re-draw connections to reflect the removed one
-            } else {
+            //// The last connection will only be removed when it is the door
+            //// This is so that the connector remains as the target 
+            //if (m_pathRenderer.Connectors.Count == 1 && door == null) {
+            //    connector.ConnectorTargeted();
+            //    break;
+            //}
 
-                // Last connection we want to not remove and leave it as a "target"
-                // So that the icon remains as "targeted"
-                // Except when this is the door, we want the door connection removed
-                if(door == null && m_pathRenderer.Connectors.Count == 1) {
-                    connector.ConnectorTargeted();
-                    break;
-                } else {
-                    m_pathRenderer.Connectors.RemoveAt(0);
-                    m_pathRenderer.DrawConnections();
+            // Disconnect connector
+            connector.Disconnected();
+            m_pathRenderer.Connectors.Remove(connector);
+            m_pathRenderer.DrawConnections();
 
-                    if (!skipDelay) {
-                        yield return new WaitForSeconds(m_connectionDealy);
-                    }
-                }
+            if (!skipDelay) {
+                yield return new WaitForSeconds(m_connectionDealy);
             }
         }
 

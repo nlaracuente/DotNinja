@@ -401,7 +401,7 @@ PrefabInstance:
     - target: {fileID: 444518677342996474, guid: 96e7a467d19f60e48829aec4d87445bb,
         type: 3}
       propertyPath: m_Name
-      value: Connector_4x0
+      value: TopConnector_4x0
       objectReference: {fileID: 0}
     - target: {fileID: 7016983923033431571, guid: 96e7a467d19f60e48829aec4d87445bb,
         type: 3}
@@ -487,7 +487,7 @@ PrefabInstance:
     - target: {fileID: 444518677342996474, guid: 96e7a467d19f60e48829aec4d87445bb,
         type: 3}
       propertyPath: m_Name
-      value: Connector_3x0
+      value: TopConnector_3x0
       objectReference: {fileID: 0}
     - target: {fileID: 7016983923033431571, guid: 96e7a467d19f60e48829aec4d87445bb,
         type: 3}
@@ -637,7 +637,7 @@ PrefabInstance:
     - target: {fileID: 444518677342996474, guid: 96e7a467d19f60e48829aec4d87445bb,
         type: 3}
       propertyPath: m_Name
-      value: Connector_0x0
+      value: TopConnector_0x0
       objectReference: {fileID: 0}
     - target: {fileID: 7016983923033431571, guid: 96e7a467d19f60e48829aec4d87445bb,
         type: 3}
@@ -1289,7 +1289,7 @@ PrefabInstance:
     - target: {fileID: 444518677342996474, guid: 96e7a467d19f60e48829aec4d87445bb,
         type: 3}
       propertyPath: m_Name
-      value: Connector_0x0
+      value: BottomConnector_0x0
       objectReference: {fileID: 0}
     - target: {fileID: 7016983923033431571, guid: 96e7a467d19f60e48829aec4d87445bb,
         type: 3}
@@ -1364,7 +1364,7 @@ PrefabInstance:
     - target: {fileID: 444518677342996474, guid: 96e7a467d19f60e48829aec4d87445bb,
         type: 3}
       propertyPath: m_Name
-      value: Connector_3x0
+      value: BottomConnector_3x0
       objectReference: {fileID: 0}
     - target: {fileID: 7016983923033431571, guid: 96e7a467d19f60e48829aec4d87445bb,
         type: 3}
@@ -1439,7 +1439,7 @@ PrefabInstance:
     - target: {fileID: 444518677342996474, guid: 96e7a467d19f60e48829aec4d87445bb,
         type: 3}
       propertyPath: m_Name
-      value: Connector_4x0
+      value: BottomConnector_4x0
       objectReference: {fileID: 0}
     - target: {fileID: 7016983923033431571, guid: 96e7a467d19f60e48829aec4d87445bb,
         type: 3}
