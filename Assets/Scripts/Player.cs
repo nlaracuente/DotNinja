@@ -68,6 +68,20 @@ public class Player : MonoBehaviour
     Vector3 m_initialPosition;
 
     /// <summary>
+    /// The player moves towards this when exiting the level
+    /// Using a transform so that I can animate the transform
+    /// and give the player the illusion it is walking
+    /// </summary>
+    [SerializeField]
+    Transform m_exitTarget;
+
+    /// <summary>
+    /// Speed at which the player exits
+    /// </summary>
+    [SerializeField]
+    float m_exitSpeed = 5f;
+
+    /// <summary>
     /// Subscribes to all connectors
     /// </summary>
     void Start()
@@ -145,6 +159,11 @@ public class Player : MonoBehaviour
                 AudioManager.instance.PlayStartMovingSound(transform);
             }
 
+            // Make player look at the direction it is going to
+            var dir = connector.transform.position - transform.position;
+            var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+
             while (Vector2.Distance(transform.position, destination) > .001f)
             {
                 Vector3 position = Vector2.MoveTowards(transform.position, destination, m_moveSpeed * Time.deltaTime);
@@ -157,6 +176,15 @@ public class Player : MonoBehaviour
                 yield return new WaitForFixedUpdate();
             }
 
+            // HACKS!
+            // Reset rotation
+            // Except when connected on the top rows
+            if (transform.position.y <= 0 ) {
+                transform.rotation = Quaternion.identity;
+            } else {
+                transform.rotation = Quaternion.Euler(0f, 0f, 180f);
+            }
+            
             transform.position = destination;
 
             // Detache rope
@@ -251,5 +279,27 @@ public class Player : MonoBehaviour
 
         // Re-enable collisions
         m_rigidbody.simulated = true;
+    }
+
+    /// <summary>
+    /// Makes the player move to the right while he laughs/exits the level
+    /// </summary>
+    /// <param name="length"></param>
+    /// <returns></returns>
+    public IEnumerator LevelCompletedAnimationRoutine(float length)
+    {
+        float targetTime = Time.time + length;
+
+        // Mak the player move
+        while (Time.time < targetTime) {
+            Vector3 targetPosition = Vector3.MoveTowards(transform.position,
+                                                         m_exitTarget.position, 
+                                                         m_exitSpeed * Time.deltaTime);
+
+            // Keep the player's current Z position
+            targetPosition.z = transform.position.z;
+            m_rigidbody.MovePosition(targetPosition);
+            yield return null;
+        }
     }
 }

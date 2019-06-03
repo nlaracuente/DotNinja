@@ -96,9 +96,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_moveSpeed: 8
   m_connectionDealy: 0.2
-  m_fallSpeed: 0.5
-  m_fallTime: 1
+  m_fallSpeed: 1.5
+  m_fallTime: 1.75
   m_fallSpinRate: 45
+  m_exitTarget: {fileID: 0}
+  m_exitSpeed: 5
 --- !u!50 &1942840284186639937
 Rigidbody2D:
   serializedVersion: 4
