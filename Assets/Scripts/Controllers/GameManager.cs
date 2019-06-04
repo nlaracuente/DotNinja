@@ -222,9 +222,14 @@ public class GameManager : MonoBehaviour
         }
 
         AudioManager.instance.PlayLevelCompletedSound(ActivePlayer.transform);
-        StartCoroutine(ActivePlayer.LevelCompletedAnimationRoutine());
+
+        IEnumerator playerRoutine = ActivePlayer.LevelCompletedAnimationRoutine();
+        StartCoroutine(playerRoutine);
 
         yield return StartCoroutine(FadeScreenAndTransitionTo(transitionTo));
+
+        /// In case it is still running
+        StopCoroutine(playerRoutine);
 
         // Not always reset
         // This is a temporary hack

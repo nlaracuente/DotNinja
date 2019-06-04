@@ -191,7 +191,6 @@ public class Connector : MonoBehaviour
 
         if (m_playerConnected)
         {
-            Debug.Log("Player is connected to " + this + ". Trigger death ");
             GameManager.instance.TriggerPlayerDeath();
         }
 

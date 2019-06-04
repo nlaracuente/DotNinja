@@ -170,7 +170,10 @@ public class PathRenderer : MonoBehaviour
         }
 
         int count = Connectors.Count - index;
-        Connectors.RemoveRange(index, count);
+        if (count >= 0) {
+            Connectors.RemoveRange(index, count);
+        }
+        
 
         // Ensure the first connector is still targeted
         if(index > 0) {
@@ -307,7 +310,9 @@ public class PathRenderer : MonoBehaviour
         disconnected.ForEach(d => d.Disconnected());
 
         // Avoid attempting to remove beyond the last item
-        Connectors.RemoveRange(index, count);
+        if (count >= 0) {
+            Connectors.RemoveRange(index, count);
+        }
 
         DrawConnections();
     }
