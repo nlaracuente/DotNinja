@@ -69,6 +69,11 @@ public class GameManager : MonoBehaviour
     public bool IsGamePaused { get; set; } = false;
 
     /// <summary>
+    /// Total moves the player has peformed for the current level
+    /// </summary>
+    public int TotalMoves { get; set; } = 0;
+
+    /// <summary>
     /// A reference to the current scene fader
     /// </summary>
     SceneFader m_fader;
@@ -164,6 +169,7 @@ public class GameManager : MonoBehaviour
         IsLevelLoaded = false;
         IsLevelCompleted = false;
         IsGamePaused = false;
+        TotalMoves = 0;
 
         // Not already running
         if (m_loadLevelRoutine == null)
@@ -210,26 +216,34 @@ public class GameManager : MonoBehaviour
     {
         yield return StartCoroutine(door.OpenRoutine());
 
+        // Make the player exit
+        AudioManager.instance.PlayLevelCompletedSound(ActivePlayer.transform);
+        yield return StartCoroutine(ActivePlayer.LevelCompletedAnimationRoutine());
+
+
+        // Display the results
+        LevelController controller = FindObjectOfType<LevelController>();
+        MenuController menu = FindObjectOfType<MenuController>();
+        menu.ShowLevelCompletedMenu(m_currentLevel, TotalMoves, controller.MaxMoves);
+    }
+
+    /// <summary>
+    /// Triggers the transition into the next level
+    /// Loads the credit if at the last level
+    /// </summary>
+    public void LoadNextLevel()
+    {
         // Defaults action to credits screen
         Action transitionTo = TransitionToCredits;
 
         // Switches to loading the level if it can be loaded
         int nextLevel = m_currentLevel + 1;
-        if (LevelSceneCanBeLoaded(nextLevel))
-        {
+        if (LevelSceneCanBeLoaded(nextLevel)) {
             m_currentLevel = nextLevel;
             transitionTo = LoadCurrentLevel;
         }
 
-        AudioManager.instance.PlayLevelCompletedSound(ActivePlayer.transform);
-
-        IEnumerator playerRoutine = ActivePlayer.LevelCompletedAnimationRoutine();
-        StartCoroutine(playerRoutine);
-
-        yield return StartCoroutine(FadeScreenAndTransitionTo(transitionTo));
-
-        /// In case it is still running
-        StopCoroutine(playerRoutine);
+        StartCoroutine(FadeScreenAndTransitionTo(transitionTo));
 
         // Not always reset
         // This is a temporary hack

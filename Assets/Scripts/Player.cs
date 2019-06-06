@@ -184,6 +184,9 @@ public class Player : MonoBehaviour
             if (transform.position != connector.Anchor.position) {
                 skipDelay = false;
                 AudioManager.instance.PlayStartMovingSound(transform);
+
+                // Increase total moves made
+                GameManager.instance.TotalMoves++;
             }
 
             // Make player look at the direction it is going to
@@ -353,6 +356,9 @@ public class Player : MonoBehaviour
     /// </summary>
     void RemoveCollectedKeys()
     {
+        // Reset moves since the player fell
+        GameManager.instance.TotalMoves = 0;
+
         // Marks all keys as not collected
         foreach (Key key in FindObjectsOfType<Key>()) {
             key.IsCollected = false;

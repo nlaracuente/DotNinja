@@ -8,10 +8,16 @@ using UnityEngine;
 public class MenuController : MonoBehaviour
 {
     /// <summary>
-    /// A reference to the menu game object
+    /// A reference to the pause menu
     /// </summary>
     [SerializeField]
-    GameObject m_menuGO;
+    GameObject m_pasueMenuGO;
+
+    /// <summary>
+    /// A reference to the level completed menu
+    /// </summary>
+    [SerializeField]
+    LevelCompletionSummary m_completionSummary;
 
     /// <summary>
     /// The volume slider for controlling the music
@@ -32,6 +38,10 @@ public class MenuController : MonoBehaviour
     private void Start()
     {
         ToggleMenu(false);
+
+        if (m_completionSummary) {
+            m_completionSummary.gameObject.SetActive(false);
+        }        
 
         if (m_musicVolumeSlider != null) {
             m_musicVolumeSlider.SetValue(AudioManager.instance.MusicVolume);
@@ -61,6 +71,14 @@ public class MenuController : MonoBehaviour
     }
 
     /// <summary>
+    /// Triggers the transition into the next level
+    /// </summary>
+    public void NextLevel()
+    {
+        GameManager.instance.LoadNextLevel();
+    }
+
+    /// <summary>
     /// Terminates the game
     /// </summary>
     public void QuitGame()
@@ -74,8 +92,8 @@ public class MenuController : MonoBehaviour
     /// <param name="isOpened"></param>
     public void ToggleMenu(bool isOpened)
     {
-        if(m_menuGO != null) {
-            m_menuGO.SetActive(isOpened);
+        if(m_pasueMenuGO != null) {
+            m_pasueMenuGO.SetActive(isOpened);
         }
 
         GameManager.instance.IsGamePaused = isOpened;
@@ -97,5 +115,20 @@ public class MenuController : MonoBehaviour
     public void ChangeFxVolume(float volume)
     {
         AudioManager.instance.FxVolume = volume;
+    }
+
+    /// <summary>
+    /// Sets the level completed menu to active
+    /// </summary>
+    public void ShowLevelCompletedMenu(int level, int totalMoves, int maxMoves)
+    {
+        if (m_completionSummary) {
+            m_completionSummary.gameObject.SetActive(true);
+            m_completionSummary.DisplayResults(level, totalMoves, maxMoves);
+        } else {
+            Debug.LogError("MenuController does not have a reference to the Level Completed Menu.\n" +
+                           "Auto moving to next level...");
+            NextLevel();
+        }
     }
 }
