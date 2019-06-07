@@ -146,7 +146,7 @@ MonoBehaviour:
   m_fxsVolume: 0.75
   m_fxVolumeChangeDemoClip: {fileID: 8300000, guid: 69049c6ab8a755943896064a32e3a2f5,
     type: 3}
-  m_musicClip: {fileID: 8300000, guid: b7127a8abc94f314f907dee6d65f3e81, type: 3}
+  m_musicClip: {fileID: 8300000, guid: f2bb3b64efb2fe8498c8e2dd7cf70904, type: 3}
   m_doorClip: {fileID: 8300000, guid: 367144db4a34af34cab3cde546e6e85e, type: 3}
   m_connectClip: {fileID: 8300000, guid: 69049c6ab8a755943896064a32e3a2f5, type: 3}
   m_releaseClip: {fileID: 8300000, guid: e48cf9c8bb6c07b41b0def69d13909b6, type: 3}
