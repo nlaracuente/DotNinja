@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using System.Text.RegularExpressions;
 
 public class GameManager : MonoBehaviour
 {
@@ -33,7 +34,7 @@ public class GameManager : MonoBehaviour
     /// Keeps track of the current level
     /// </summary>
     [SerializeField]
-    int m_currentLevel = 1;
+    public int CurrentLevel { get; set; } = 1;
 
     /// <summary>
     /// The name of the scene for the main menu
@@ -147,7 +148,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void StartGame()
     {
-        m_currentLevel = 1;
+        CurrentLevel = 1;
         LoadCurrentLevel();
     }
 
@@ -164,19 +165,41 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void LoadLevel()
     {
-        // Force the fader to be null in case we are tryng to reference and old one
+        // Already running
+        if (m_loadLevelRoutine != null) {
+            return;
+        }
+
+        // Ensures game manager forgets about a previous level
+        ResetLevel();
+
+        // Ensure the current level matches the scene name
+        UpdateCurrentLevelNumber();
+
+        m_loadLevelRoutine = LoadLevelRoutine();
+        StartCoroutine(m_loadLevelRoutine);
+    }
+
+    /// <summary>
+    /// Resets level references, flags and counters
+    /// </summary>
+    private void ResetLevel()
+    {
         m_fader = null;
         IsLevelLoaded = false;
         IsLevelCompleted = false;
         IsGamePaused = false;
         TotalMoves = 0;
+    }
 
-        // Not already running
-        if (m_loadLevelRoutine == null)
-        {
-            m_loadLevelRoutine = LoadLevelRoutine();
-            StartCoroutine(m_loadLevelRoutine);
-        }
+    /// <summary>
+    /// Uses the name of the active scene to determine the current level number
+    /// </summary>
+    private void UpdateCurrentLevelNumber()
+    {
+        string sceneName = SceneManager.GetActiveScene().name;
+        string levelNumber = Regex.Match(sceneName, @"\d+").Value;
+        CurrentLevel = int.Parse(levelNumber);
     }
 
     /// <summary>
@@ -224,7 +247,7 @@ public class GameManager : MonoBehaviour
         // Display the results
         LevelController controller = FindObjectOfType<LevelController>();
         MenuController menu = FindObjectOfType<MenuController>();
-        menu.ShowLevelCompletedMenu(m_currentLevel, TotalMoves, controller.MaxMoves);
+        menu.ShowLevelCompletedMenu(CurrentLevel, TotalMoves, controller.MaxMoves);
     }
 
     /// <summary>
@@ -237,9 +260,9 @@ public class GameManager : MonoBehaviour
         Action transitionTo = TransitionToCredits;
 
         // Switches to loading the level if it can be loaded
-        int nextLevel = m_currentLevel + 1;
+        int nextLevel = CurrentLevel + 1;
         if (LevelSceneCanBeLoaded(nextLevel)) {
-            m_currentLevel = nextLevel;
+            CurrentLevel = nextLevel;
             transitionTo = LoadCurrentLevel;
         }
 
@@ -287,7 +310,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void LoadCurrentLevel()
     { 
-        string levelName = string.Format(m_levelSceneNameFormat, m_currentLevel);
+        string levelName = string.Format(m_levelSceneNameFormat, CurrentLevel);
         TransitionToScene(levelName);
     }
 
