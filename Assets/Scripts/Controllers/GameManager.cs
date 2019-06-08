@@ -33,8 +33,14 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Keeps track of the current level
     /// </summary>
-    [SerializeField]
     public int CurrentLevel { get; set; } = 1;
+
+    /// <summary>
+    /// Total levels available
+    /// This is exposed to see it in the editor but is auto populated in the <see cref="ApplicationStart"/>
+    /// </summary>
+    [SerializeField]
+    int m_totalLevels = 0;
 
     /// <summary>
     /// The name of the scene for the main menu
@@ -78,6 +84,11 @@ public class GameManager : MonoBehaviour
     /// A reference to the current scene fader
     /// </summary>
     SceneFader m_fader;
+
+    /// <summary>
+    /// The container for loading and storing the data to save
+    /// </summary>
+    SavedData m_savedData = new SavedData();
 
     /// <summary>
     /// Lazy loads the SceneFader as it changes per scene
@@ -131,6 +142,47 @@ public class GameManager : MonoBehaviour
         } else
         {
             Destroy(gameObject);
+        }
+    }
+
+    /// <summary>
+    /// Trigger initial load logic
+    /// </summary>
+    private void Start()
+    {
+        ApplicationStart();
+    }
+
+    /// <summary>
+    /// Handles the initial application load
+    /// </summary>
+    void ApplicationStart()
+    {
+        // Level numbers start at 1
+        for (int i = 1; i < SceneManager.sceneCountInBuildSettings; i++) {
+            string sceneName = string.Format(m_levelSceneNameFormat, i);
+
+            if (Application.CanStreamedLevelBeLoaded(sceneName)) {
+                m_totalLevels++;
+            }
+        }
+
+        m_savedData.SetDefaults(AudioManager.instance.MusicVolume, AudioManager.instance.FxVolume, m_totalLevels);
+    }
+
+    /// <summary>
+    /// Stores the given level's progress in the <see cref="m_savedData"/> to save later
+    /// </summary>
+    /// <param name="level"></param>
+    /// <param name="isCompleted"></param>
+    /// <param name="isPrefect"></param>
+    void SetLevelProgress(int level, bool isCompleted, bool isPrefect)
+    {
+        if (level > 0 && level < m_savedData.Progress.Length) {
+            m_savedData.Progress[level] = new LevelProgress() {
+                IsCompleted = isCompleted,
+                IsPerfect = isPrefect
+            };
         }
     }
 
@@ -248,6 +300,11 @@ public class GameManager : MonoBehaviour
         LevelController controller = FindObjectOfType<LevelController>();
         MenuController menu = FindObjectOfType<MenuController>();
         menu.ShowLevelCompletedMenu(CurrentLevel, TotalMoves, controller.MaxMoves);
+
+        // Store the results
+        bool isCompleted = true;
+        bool isPerfect = TotalMoves <= controller.MaxMoves;
+        SetLevelProgress(CurrentLevel, isCompleted, isPerfect);
     }
 
     /// <summary>
