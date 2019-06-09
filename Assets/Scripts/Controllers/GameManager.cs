@@ -3,6 +3,8 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
 using System.Text.RegularExpressions;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
 
 public class GameManager : MonoBehaviour
 {
@@ -59,6 +61,13 @@ public class GameManager : MonoBehaviour
     /// </summary>
     [SerializeField]
     string m_creditsSceneName = "Credits";
+
+    /// <summary>
+    /// The name of the save file
+    /// </summary>
+    [SerializeField]
+    string m_saveFileName = "DotNinja.test";
+    string SaveFilePath { get { return string.Format("{0}/{1}", Application.persistentDataPath, m_saveFileName); } }
 
     /// <summary>
     /// True once the level is started
@@ -148,9 +157,17 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Trigger initial load logic
     /// </summary>
-    private void Start()
+    void Start()
     {
         ApplicationStart();
+    }
+
+    /// <summary>
+    /// Let's make sure the game is always saved before it closes
+    /// </summary>
+    void OnApplicationQuit()
+    {
+        SaveGame();
     }
 
     /// <summary>
@@ -158,16 +175,20 @@ public class GameManager : MonoBehaviour
     /// </summary>
     void ApplicationStart()
     {
-        // Level numbers start at 1
-        for (int i = 1; i < SceneManager.sceneCountInBuildSettings; i++) {
-            string sceneName = string.Format(m_levelSceneNameFormat, i);
+        // No save file
+        if (!LoadGame()) {
 
-            if (Application.CanStreamedLevelBeLoaded(sceneName)) {
-                m_totalLevels++;
+            // Level numbers start at 1
+            for (int i = 1; i < SceneManager.sceneCountInBuildSettings; i++) {
+                string sceneName = string.Format(m_levelSceneNameFormat, i);
+
+                if (Application.CanStreamedLevelBeLoaded(sceneName)) {
+                    m_totalLevels++;
+                }
             }
-        }
 
-        m_savedData.SetDefaults(AudioManager.instance.MusicVolume, AudioManager.instance.FxVolume, m_totalLevels);
+            m_savedData.SetDefaults(AudioManager.instance.MusicVolume, AudioManager.instance.FxVolume, m_totalLevels);
+        }
     }
 
     /// <summary>
@@ -179,11 +200,58 @@ public class GameManager : MonoBehaviour
     void SetLevelProgress(int level, bool isCompleted, bool isPrefect)
     {
         if (level > 0 && level < m_savedData.Progress.Length) {
-            m_savedData.Progress[level] = new LevelProgress() {
-                IsCompleted = isCompleted,
-                IsPerfect = isPrefect
-            };
+
+            // Do not override if the existing progress is better
+            // by checking the given values are the best value to store
+            LevelProgress progress = m_savedData.Progress[level];
+
+            // Since these default to FALSE we only update them if they are TRUE
+            if (isCompleted) {
+                progress.IsCompleted = true;
+            }
+
+            if (isPrefect) {
+                progress.IsPerfect = true;
+            }
+
+            m_savedData.Progress[level] = progress;
+            SaveGame();
         }
+    }
+
+    /// <summary>
+    /// Loads any saved file and 
+    /// Returns true when the file is loaded
+    /// </summary>
+    bool LoadGame()
+    {
+        if (!File.Exists(SaveFilePath)) {
+            return false;
+        }
+
+        BinaryFormatter formatter = new BinaryFormatter();
+        FileStream stream = new FileStream(SaveFilePath, FileMode.Open);
+        m_savedData = formatter.Deserialize(stream) as SavedData;
+        stream.Close();
+
+        AudioManager.instance.MusicVolume = m_savedData.MusicVolume;
+        AudioManager.instance.FxVolume = m_savedData.FxVolume;
+        return true;
+    }
+
+    /// <summary>
+    /// Saves the current progress
+    /// </summary>
+    public void SaveGame()
+    {
+        m_savedData.MusicVolume = AudioManager.instance.MusicVolume;
+        m_savedData.FxVolume = AudioManager.instance.FxVolume;
+
+        BinaryFormatter formatter = new BinaryFormatter();
+        FileStream stream = new FileStream(SaveFilePath, FileMode.Create);
+
+        formatter.Serialize(stream, m_savedData);
+        stream.Close();
     }
 
     /// <summary>
