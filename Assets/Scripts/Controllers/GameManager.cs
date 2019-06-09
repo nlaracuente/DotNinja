@@ -268,6 +268,16 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void StartGame()
     {
+        TransitionToLevel(1);
+    }
+
+    /// <summary>
+    /// Sets the current level to the given level
+    /// Triggers a transition to that level
+    /// </summary>
+    /// <param name="level"></param>
+    public void TransitionToLevel(int level)
+    {
         CurrentLevel = 1;
         LoadCurrentLevel();
     }
