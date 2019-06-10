@@ -106,6 +106,14 @@ public class MenuController : MonoBehaviour
     }
 
     /// <summary>
+    /// Reloads the current level to "re-start" it
+    /// </summary>
+    public void RestartLevel()
+    {
+        GameManager.instance.Restartlevel();
+    }
+
+    /// <summary>
     /// Triggers the transition into the next level
     /// </summary>
     public void NextLevel()

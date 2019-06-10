@@ -161,7 +161,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Holds the routine for loading the next level to avoid re-triggering
     /// </summary>
-    IEnumerator m_nextLevelRoutine;
+    IEnumerator m_levelTransitionRoutine;
 
     /// <summary>
     /// Sets up instance
@@ -336,8 +336,6 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        Debug.Log("On Level Load");
-
         // Ensures game manager forgets about a previous level
         ResetLevel();
 
@@ -357,7 +355,7 @@ public class GameManager : MonoBehaviour
         IsLevelCompleted = false;
         IsGamePaused = false;
         TotalMoves = 0;
-        m_nextLevelRoutine = null;
+        m_levelTransitionRoutine = null;
     }
 
     /// <summary>
@@ -436,12 +434,12 @@ public class GameManager : MonoBehaviour
     public void LoadNextLevel()
     {
         // Already running
-        if (m_nextLevelRoutine != null) {
+        if (m_levelTransitionRoutine != null) {
             return;
         }
 
-        m_nextLevelRoutine = LoadNextLevelRoutine();
-        StartCoroutine(m_nextLevelRoutine);
+        m_levelTransitionRoutine = LoadNextLevelRoutine();
+        StartCoroutine(m_levelTransitionRoutine);
     }
 
     /// <summary>
@@ -460,14 +458,48 @@ public class GameManager : MonoBehaviour
             transitionTo = LoadCurrentLevel;
         }
 
-        m_nextLevelRoutine = FadeScreenAndTransitionTo(transitionTo);
-        yield return StartCoroutine(m_nextLevelRoutine);
+        m_levelTransitionRoutine = FadeScreenAndTransitionTo(transitionTo);
+        yield return StartCoroutine(m_levelTransitionRoutine);
 
         // Ensure nothing else is running
         // This is curcial or else the level loading sequence might overlap when level ending sequence
         StopAllCoroutines();
 
-        m_nextLevelRoutine = null;
+        m_levelTransitionRoutine = null;
+        IsLevelLoaded = false;
+    }
+
+    /// <summary>
+    /// Triggers the reloading of the current level
+    /// </summary>
+    public void Restartlevel()
+    {
+        // Already running
+        if (m_levelTransitionRoutine != null) {
+            return;
+        }
+
+        m_levelTransitionRoutine = RestartLevelRoutine();
+        StartCoroutine(m_levelTransitionRoutine);
+    }
+
+    /// <summary>
+    /// Reloads the current level
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator RestartLevelRoutine()
+    {
+        // Defaults action to credits screen
+        Action transitionTo = LoadCurrentLevel;
+
+        m_levelTransitionRoutine = FadeScreenAndTransitionTo(transitionTo);
+        yield return StartCoroutine(m_levelTransitionRoutine);
+
+        // Ensure nothing else is running
+        // This is curcial or else the level loading sequence might overlap when level ending sequence
+        StopAllCoroutines();
+
+        m_levelTransitionRoutine = null;
         IsLevelLoaded = false;
     }
 
