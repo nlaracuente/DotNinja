@@ -1,8 +1,9 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 
+/// <summary>
+/// The player controlled avatar
+/// </summary>
 [RequireComponent(typeof(Rigidbody2D), typeof(SpriteRenderer))]
 public class Player : MonoBehaviour
 {
@@ -171,7 +172,7 @@ public class Player : MonoBehaviour
     {
         IsMoving = true;
         m_pathRenderer.ResetCursor();
-        AudioManager.instance.PlayReleaseSound(transform);
+        AudioManager.instance.PlayReleaseSound();
 
         while (m_pathRenderer.Connectors.Count > 0)
         {
@@ -183,7 +184,7 @@ public class Player : MonoBehaviour
             // This is a side effect of not removing the last connector to keep the sprite that shows it is connected
             if (transform.position != connector.Anchor.position) {
                 skipDelay = false;
-                AudioManager.instance.PlayStartMovingSound(transform);
+                AudioManager.instance.PlayStartMovingSound();
 
                 // Increase total moves made
                 GameManager.instance.TotalMoves++;
@@ -263,7 +264,7 @@ public class Player : MonoBehaviour
     {
         if (!IsPlayerDead && collision.collider.CompareTag("MovingObstacle"))
         {
-            AudioManager.instance.PlayHitSound(transform);
+            AudioManager.instance.PlayHitSound();
             TriggerDeath();
         }
         
@@ -296,7 +297,7 @@ public class Player : MonoBehaviour
         // Disable collisions while falling
         m_rigidbody.simulated = false;
 
-        AudioManager.instance.PlayReleaseSound(transform);
+        AudioManager.instance.PlayReleaseSound();
 
         float totalFallTime = Time.time + m_fallTime;
         while (Time.time < totalFallTime)

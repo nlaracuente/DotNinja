@@ -1,11 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 /// <summary>
 /// Handles playing sound and music
 /// Music plays from the AudioManager as it is persistent
-/// Sounds use the PlaySoundAt function
 /// </summary>
 [RequireComponent(typeof(AudioSource))]
 public class AudioManager : MonoBehaviour
@@ -88,42 +85,72 @@ public class AudioManager : MonoBehaviour
     /// </summary>
     Transform DefaultAudioSourceTransform { get { return Camera.main.transform; } }
 
-    // The following AudioClips represents all the music/sounds effects that can be played
+    /// <summary>
+    /// Game music
+    /// </summary>
     [SerializeField]
     AudioClip m_musicClip;
 
+    /// <summary>
+    /// Door opening
+    /// </summary>
     [SerializeField]
     AudioClip m_doorClip;
 
+    /// <summary>
+    /// Hook connected
+    /// </summary>
     [SerializeField]
     AudioClip m_connectClip;
 
+    /// <summary>
+    /// Player initiated moving sequence
+    /// </summary>
     [SerializeField]
     AudioClip m_releaseClip;
 
+    /// <summary>
+    /// On Mouse hover
+    /// </summary>
     [SerializeField]
     AudioClip m_hoverClip;
 
+    /// <summary>
+    /// Key collected
+    /// </summary>
     [SerializeField]
     AudioClip m_keyClip;
 
+    /// <summary>
+    /// Player hit obstacle
+    /// </summary>
     [SerializeField]
     AudioClip m_hitClip;
 
-    [SerializeField]
-    AudioClip m_startMovingClip;
-
+    /// <summary>
+    /// A collection of clips to play when moving from connections to connections
+    /// to add variations
+    /// </summary>
     [SerializeField]
     AudioClip[] m_movingClips;
 
+    /// <summary>
+    /// Player's laugh on level complete
+    /// </summary>
     [SerializeField]
-    AudioClip m_levelCompletedClip;
+    AudioClip m_playerLevelCompletionLaughClip;
 
+    /// <summary>
+    /// Connector retracted into the wall
+    /// </summary>
     [SerializeField]
-    AudioClip m_connectorRetracted;
+    AudioClip m_connectorRetractedClip;
 
+    /// <summary>
+    /// A retracted connector reset
+    /// </summary>
     [SerializeField]
-    AudioClip m_connectorReset;
+    AudioClip m_connectorResetClip;
 
     /// <summary>
     /// Random generator
@@ -177,9 +204,9 @@ public class AudioManager : MonoBehaviour
     /// Returns the length of the sound clip
     /// </summary>
     /// <returns></returns>
-    public float PlayDoorSound(Transform source = null)
+    public float PlayDoorSound()
     {
-        PlaySoundAt(m_doorClip, source);
+        PlaySoundAt(m_doorClip);
         return m_doorClip.length;
     }
 
@@ -188,9 +215,9 @@ public class AudioManager : MonoBehaviour
     /// Returns the length of the sound clip
     /// </summary>
     /// <returns></returns>
-    public float PlayConnectSound(Transform source = null)
+    public float PlayConnectSound()
     {
-        PlaySoundAt(m_connectClip, source);
+        PlaySoundAt(m_connectClip);
         return m_connectClip.length;
     }
 
@@ -199,9 +226,9 @@ public class AudioManager : MonoBehaviour
     /// Returns the length of the sound clip
     /// </summary>
     /// <returns></returns>
-    public float PlayReleaseSound(Transform source = null)
+    public float PlayReleaseSound()
     {
-        PlaySoundAt(m_releaseClip, source);
+        PlaySoundAt(m_releaseClip);
         return m_releaseClip.length;
     }
 
@@ -210,9 +237,9 @@ public class AudioManager : MonoBehaviour
     /// Returns the length of the sound clip
     /// </summary>
     /// <returns></returns>
-    public float PlayHoverSound(Transform source = null)
+    public float PlayHoverSound()
     {
-        PlaySoundAt(m_hoverClip, source);
+        PlaySoundAt(m_hoverClip);
         return m_hoverClip.length;
     }
 
@@ -221,9 +248,9 @@ public class AudioManager : MonoBehaviour
     /// Returns the length of the sound clip
     /// </summary>
     /// <returns></returns>
-    public float PlayKeySound(Transform source = null)
+    public float PlayKeySound()
     {
-        PlaySoundAt(m_keyClip, source);
+        PlaySoundAt(m_keyClip);
         return m_keyClip.length;
     }
 
@@ -232,9 +259,9 @@ public class AudioManager : MonoBehaviour
     /// Returns the length of the sound clip
     /// </summary>
     /// <returns></returns>
-    public float PlayHitSound(Transform source = null)
+    public float PlayHitSound()
     {
-        PlaySoundAt(m_hitClip, source);
+        PlaySoundAt(m_hitClip);
         return m_hitClip.length;
     }
 
@@ -243,11 +270,11 @@ public class AudioManager : MonoBehaviour
     /// Returns the length of the sound clip
     /// </summary>
     /// <returns></returns>
-    public float PlayStartMovingSound(Transform source = null)
+    public float PlayStartMovingSound()
     {
         int index = Random.Range(0, m_movingClips.Length);
         AudioClip clip = m_movingClips[index];
-        PlaySoundAt(clip, source);
+        PlaySoundAt(clip);
         return clip.length;
     }
 
@@ -256,10 +283,10 @@ public class AudioManager : MonoBehaviour
     /// Returns the length of the sound clip
     /// </summary>
     /// <returns></returns>
-    public float PlayLevelCompletedSound(Transform source = null)
+    public float PlayLevelCompletedSound()
     {
-        PlaySoundAt(m_levelCompletedClip, source);
-        return m_levelCompletedClip.length;
+        PlaySoundAt(m_playerLevelCompletionLaughClip);
+        return m_playerLevelCompletionLaughClip.length;
     }
 
     /// <summary>
@@ -267,10 +294,10 @@ public class AudioManager : MonoBehaviour
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
-    public float PlayConnectorRetracted(Transform source = null)
+    public float PlayConnectorRetracted()
     {
-        PlaySoundAt(m_connectorRetracted, source);
-        return m_connectorRetracted.length;
+        PlaySoundAt(m_connectorRetractedClip);
+        return m_connectorRetractedClip.length;
     }
 
     /// <summary>
@@ -278,10 +305,10 @@ public class AudioManager : MonoBehaviour
     /// </summary>
     /// <param name="source"></param>
     /// <returns></returns>
-    public float PlayConnectorReset(Transform source = null)
+    public float PlayConnectorReset()
     {
-        PlaySoundAt(m_connectorReset, source);
-        return m_connectorReset.length;
+        PlaySoundAt(m_connectorResetClip);
+        return m_connectorResetClip.length;
     }
 
     /// <summary>
@@ -289,18 +316,11 @@ public class AudioManager : MonoBehaviour
     /// we were having sound level issues so we are using <see cref="SingleShot2DAudio"/> instead
     /// However, this means we need to spawn a new object for each sound.
     /// We could argue using object pooling here but that's for a later enhancement
-    /// 
-    /// This was change late during the jam hence why the signature is not changed
     /// </summary>
     /// <param name="clip"></param>
-    /// <param name="source"></param>
     /// <param name="volume"></param>
-    void PlaySoundAt(AudioClip clip, Transform source, float volume = 1f)
+    void PlaySoundAt(AudioClip clip, float volume = 1f)
     {
-        if (source == null) {
-            source = DefaultAudioSourceTransform;
-        }
-
         if(clip != null) {
             volume = Mathf.Clamp01(volume * m_fxsVolume);
             SingleShot2DAudio audio = Instantiate(m_audioPrefab).GetComponent<SingleShot2DAudio>();

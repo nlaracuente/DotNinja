@@ -1,7 +1,9 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Requires key(s) to unlock and win the level
+/// </summary>
 public class Door : MonoBehaviour
 {
     /// <summary>
@@ -47,7 +49,7 @@ public class Door : MonoBehaviour
         // Wait to visually register player reached the door
         yield return new WaitForSeconds(m_openDelay);
 
-        float length = AudioManager.instance.PlayDoorSound(transform);
+        float length = AudioManager.instance.PlayDoorSound();
         if (m_renderer != null && m_doorOpenedSprite != null)
         {
             m_renderer.sprite = m_doorOpenedSprite;

@@ -6,6 +6,9 @@ using System.Text.RegularExpressions;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 
+/// <summary>
+/// Controls the scene transition, stores game data, and handles communications accross other controllers
+/// </summary>
 public class GameManager : MonoBehaviour
 {
     /// <summary>
@@ -67,6 +70,10 @@ public class GameManager : MonoBehaviour
     /// </summary>
     [SerializeField]
     string m_saveFileName = "DotNinja.test";
+
+    /// <summary>
+    /// Where to save the game file data
+    /// </summary>
     string SaveFilePath { get { return string.Format("{0}/{1}", Application.persistentDataPath, m_saveFileName); } }
 
     /// <summary>
@@ -407,7 +414,7 @@ public class GameManager : MonoBehaviour
         yield return StartCoroutine(door.OpenRoutine());
 
         // Make the player exit
-        AudioManager.instance.PlayLevelCompletedSound(ActivePlayer.transform);
+        AudioManager.instance.PlayLevelCompletedSound();
         StartCoroutine(ActivePlayer.LevelCompletedAnimationRoutine());
 
         // Store the results

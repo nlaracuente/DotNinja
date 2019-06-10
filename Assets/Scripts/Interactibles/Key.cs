@@ -1,7 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
+/// <summary>
+/// The key that must be collected to open the exit door and win the level
+/// </summary>
 [RequireComponent(typeof(SpriteRenderer))]
 public class Key : MonoBehaviour
 {
@@ -97,7 +98,7 @@ public class Key : MonoBehaviour
             } 
 
             IsCollected = true;
-            AudioManager.instance.PlayKeySound(transform);
+            AudioManager.instance.PlayKeySound();
         }
     }
 }

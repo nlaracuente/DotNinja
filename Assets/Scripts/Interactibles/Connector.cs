@@ -1,7 +1,9 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// The different types of connectors which defines its behavior
+/// </summary>
 public enum ConnectorType
 {
     Normal,
@@ -13,7 +15,12 @@ public enum ConnectorType
 /// </summary>
 public class Connector : MonoBehaviour
 {
+    /// <summary>
+    /// Events for the different states of a connector
+    /// </summary>
+    /// <param name="connector"></param>
     public delegate void ConnectorClickedEvent(Connector connector);
+
     public event ConnectorClickedEvent OnSelectedEvent;
     public event ConnectorClickedEvent OnDeselectedEvent;
     public event ConnectorClickedEvent OnMouseEnterEvent;
@@ -102,11 +109,6 @@ public class Connector : MonoBehaviour
     /// True while the player is connected to this connector
     /// </summary>
     bool m_playerConnected = false;
-
-    /// <summary>
-    /// A reference to the routine for retracting
-    /// </summary>
-    IEnumerator m_retractRoutine;
 
     /// <summary>
     /// The transform for the player to anchor to
@@ -202,7 +204,6 @@ public class Connector : MonoBehaviour
         AudioManager.instance.PlayConnectorReset();
         IsRetracted = false;
         SetDefaultSprite();
-        m_retractRoutine = null;
     }
 
     /// <summary>

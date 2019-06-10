@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// The different types of movement resets
+/// </summary>
 public enum MovementType
 {
     PingPong,
@@ -66,7 +69,9 @@ public class MovingObstacle : MonoBehaviour
     /// </summary>
     bool m_movementTriggered = false;
 
-    // Start is called before the first frame update
+    /// <summary>
+    /// Triggers init
+    /// </summary>
     void Start()
     {
         Init();        
@@ -140,6 +145,10 @@ public class MovingObstacle : MonoBehaviour
     }
 #endif
 
+    /// <summary>
+    /// Handles the moving the obstacle along its track
+    /// </summary>
+    /// <returns></returns>
     IEnumerator MoveRoutine()
     {
         // Reset index

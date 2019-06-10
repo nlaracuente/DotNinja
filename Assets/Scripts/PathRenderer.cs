@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
@@ -272,7 +271,7 @@ public class PathRenderer : MonoBehaviour
             Vector2 end = connector.transform.position;
 
             if (IsConnectionPossible(start, end)) {
-                AudioManager.instance.PlayConnectSound(connector.transform);
+                AudioManager.instance.PlayConnectSound();
                 Connectors.Add(connector);
             }
 
@@ -304,7 +303,7 @@ public class PathRenderer : MonoBehaviour
         int count = Connectors.Count - index;
 
         if (count > 0) {
-            AudioManager.instance.PlayConnectSound(connector.transform);
+            AudioManager.instance.PlayConnectSound();
         }
 
         // Get a list of all the connectors about to be removed 
