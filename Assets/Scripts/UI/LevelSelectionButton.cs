@@ -114,7 +114,7 @@ public class LevelSelectionButton : MonoBehaviour
     /// <param name="level"></param>
     /// <param name="isUnlocked"></param>
     /// <param name="isPerfect"></param>
-    public void SetState(int level, bool isUnlocked, bool isPerfect)
+    public void Initialize(int level, bool isUnlocked, bool isPerfect)
     {
         m_level = level;
 

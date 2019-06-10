@@ -18,7 +18,7 @@ public class AudioManager : MonoBehaviour
     /// <summary>
     /// A reference to the audio source for playing music
     /// </summary>
-    AudioSource m_audioSource;
+    AudioSource m_musicAudioSource;
 
     /// <summary>
     /// The prefab that enables us to play 2D sounds
@@ -44,8 +44,12 @@ public class AudioManager : MonoBehaviour
     {
         get { return m_musicVolume; }
         set {
+            if (m_musicAudioSource == null) {
+                InitializeMusicSource();
+            }
+
             m_musicVolume = Mathf.Clamp01(value);
-            m_audioSource.volume = m_musicVolume;
+            m_musicAudioSource.volume = m_musicVolume;
         }
     }
 
@@ -142,20 +146,30 @@ public class AudioManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Sets up the music player and starts the music
+    /// Initializes the AudioManager's master volumes,
+    /// Audio source, random number generator, and starts the music
     /// </summary>
-    private void Start()
+    public void Initialize(float musicVolume, float fxVolume)
     {
-        m_audioSource = GetComponent<AudioSource>();
-        m_audioSource.loop = true;
-        m_audioSource.clip = m_musicClip;
-        m_audioSource.volume = m_musicVolume;
+        m_musicVolume = musicVolume;
+        m_fxsVolume = fxVolume;
+        InitializeMusicSource();
+        m_random = new Random();
+    }
+
+    /// <summary>
+    /// Initializes the audio source that controls the music
+    /// </summary>
+    void InitializeMusicSource()
+    {
+        m_musicAudioSource = GetComponent<AudioSource>();
+        m_musicAudioSource.loop = true;
+        m_musicAudioSource.clip = m_musicClip;
+        m_musicAudioSource.volume = m_musicVolume;
 
         // Ensures the music always plays from the top
-        m_audioSource.Stop();
-        m_audioSource.Play();
-
-        m_random = new Random();
+        m_musicAudioSource.Stop();
+        m_musicAudioSource.Play();
     }
 
     /// <summary>

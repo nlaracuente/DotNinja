@@ -95,11 +95,6 @@ public class GameManager : MonoBehaviour
     SceneFader m_fader;
 
     /// <summary>
-    /// The container for loading and storing the data to save
-    /// </summary>
-    SavedData m_savedData = new SavedData();
-
-    /// <summary>
     /// Lazy loads the SceneFader as it changes per scene
     /// </summary>
     SceneFader Fader
@@ -131,6 +126,30 @@ public class GameManager : MonoBehaviour
             }
 
             return m_player;
+        }
+    }
+
+    /// <summary>
+    /// The container for loading and storing the data to save
+    /// </summary>
+    SavedData m_savedData = new SavedData();
+    public LevelProgress[] AllLevelProgress { get { return m_savedData.Progress; } }
+
+    /// <summary>
+    /// A reference to the current active menu controller
+    /// </summary>
+    MenuController m_menuController;
+    /// <summary>
+    /// Returns a reference to the current menu controller
+    /// Menu controllers change per scene
+    /// </summary>
+    MenuController CurrentMenuController
+    {
+        get {
+            if (m_menuController == null) {
+                m_menuController = FindObjectOfType<MenuController>();
+            }
+            return m_menuController;
         }
     }
 
@@ -172,13 +191,25 @@ public class GameManager : MonoBehaviour
 
     /// <summary>
     /// Handles the initial application load
+    /// Initializes the AudioManager
+    /// Initializes the main MenuController
     /// </summary>
     void ApplicationStart()
     {
-        // No save file
-        if (!LoadGame()) {
+        // Default volumes settings to AudioManager's defaults
+        float musicVolume = AudioManager.instance.MusicVolume;
+        float fxVolume = AudioManager.instance.FxVolume;
 
-            // Level numbers start at 1
+        // Saved game loaded
+        if (LoadSavedGame()) {
+            musicVolume = m_savedData.MusicVolume;
+            fxVolume = m_savedData.FxVolume;
+
+        // Create new save data 
+        } else { 
+
+            // Level numbers start at 1 so we skip level 0
+            // Note: We have more built scenes than levels (i.e MainMenu/Credits)
             for (int i = 1; i < SceneManager.sceneCountInBuildSettings; i++) {
                 string sceneName = string.Format(m_levelSceneNameFormat, i);
 
@@ -187,8 +218,11 @@ public class GameManager : MonoBehaviour
                 }
             }
 
-            m_savedData.SetDefaults(AudioManager.instance.MusicVolume, AudioManager.instance.FxVolume, m_totalLevels);
+            m_savedData.SetDefaults(musicVolume, fxVolume, m_totalLevels);
         }
+
+        AudioManager.instance.Initialize(musicVolume, fxVolume);
+        CurrentMenuController.OnMainMenuLoad();
     }
 
     /// <summary>
@@ -207,7 +241,7 @@ public class GameManager : MonoBehaviour
 
             // Since these default to FALSE we only update them if they are TRUE
             if (isCompleted) {
-                progress.IsCompleted = true;
+                progress.IsUnlocked = true;
             }
 
             if (isPrefect) {
@@ -223,7 +257,7 @@ public class GameManager : MonoBehaviour
     /// Loads any saved file and 
     /// Returns true when the file is loaded
     /// </summary>
-    bool LoadGame()
+    bool LoadSavedGame()
     {
         if (!File.Exists(SaveFilePath)) {
             return false;
@@ -234,8 +268,6 @@ public class GameManager : MonoBehaviour
         m_savedData = formatter.Deserialize(stream) as SavedData;
         stream.Close();
 
-        AudioManager.instance.MusicVolume = m_savedData.MusicVolume;
-        AudioManager.instance.FxVolume = m_savedData.FxVolume;
         return true;
     }
 
@@ -262,6 +294,14 @@ public class GameManager : MonoBehaviour
     {
         Application.Quit();
     }
+
+    /// <summary>
+    /// Load the level selection menu based on player's saved data
+    /// </summary>
+    public void OnMainMenuStartButtonClicked()
+    {
+
+    }    
 
     /// <summary>
     /// Resets the level counter to 1 and loads the level

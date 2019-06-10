@@ -8,6 +8,18 @@ using UnityEngine;
 public class MenuController : MonoBehaviour
 {
     /// <summary>
+    /// A reference to the main menu
+    /// </summary>
+    [SerializeField]
+    GameObject m_mainMenuGO;
+
+    /// <summary>
+    /// A reference to the level selection menu
+    /// </summary>
+    [SerializeField]
+    GameObject m_levelSelectionMenuGO;
+
+    /// <summary>
     /// A reference to the pause menu
     /// </summary>
     [SerializeField]
@@ -32,16 +44,36 @@ public class MenuController : MonoBehaviour
     VolumeSlider m_fxVolumeSlider;
 
     /// <summary>
+    /// A reference to the level select controller
+    /// </summary>
+    LevelSelectController m_levelSelectController;
+
+    /// <summary>
+    /// Initializes main menu 
+    /// </summary>
+    public void OnMainMenuLoad()
+    {
+        if (m_mainMenuGO != null) {
+            m_mainMenuGO.SetActive(true);
+        }
+
+        if (m_levelSelectionMenuGO != null) {
+            m_levelSelectController = FindObjectOfType<LevelSelectController>();
+            m_levelSelectionMenuGO.SetActive(false);
+        }
+    }
+
+    /// <summary>
     /// Default menu to closed
     /// Ensures volume sliders match current volume levels
     /// </summary>
-    private void Start()
+    void Start()
     {
         ToggleMenu(false);
 
         if (m_completionSummary) {
             m_completionSummary.gameObject.SetActive(false);
-        }        
+        }
 
         if (m_musicVolumeSlider != null) {
             m_musicVolumeSlider.SetValue(AudioManager.instance.MusicVolume);
@@ -53,11 +85,20 @@ public class MenuController : MonoBehaviour
     }
 
     /// <summary>
-    /// Triggers the game to start
+    /// Loads the level selection menu 
     /// </summary>
-    public void StartGame()
+    public void LoadLevelSelect()
     {
-        GameManager.instance.StartGame();
+        if (m_mainMenuGO != null && m_levelSelectionMenuGO != null && m_levelSelectController != null) {
+            m_mainMenuGO.SetActive(false);
+            m_levelSelectionMenuGO.SetActive(true);
+            m_levelSelectController.LoadLevelSelection(GameManager.instance.AllLevelProgress);
+        } else {
+            Debug.LogError("Menu Controller is missing a reference to one or more of the following: " +
+                           "main menu go, level selection go, level select controller.\n" + 
+                           "Defaulting to level 1 ");
+            GameManager.instance.StartGame();
+        }
     }
 
     /// <summary>

@@ -6,9 +6,9 @@
 public struct LevelProgress 
 {
     /// <summary>
-    /// Level has been compeleted
+    /// Level is available to be played
     /// </summary>
-    public bool IsCompleted;
+    public bool IsUnlocked;
 
     /// <summary>
     /// Level ranking is perfect
@@ -47,6 +47,8 @@ public class SavedData
     {
         MusicVolume = musicVol;
         FxVolume = fxVol;
-        Progress = new LevelProgress[contentSize];
+
+        // +1 to account for the fact that level zero does not exist
+        Progress = new LevelProgress[contentSize + 1];
     }
 }
