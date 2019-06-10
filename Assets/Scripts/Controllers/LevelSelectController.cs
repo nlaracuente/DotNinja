@@ -24,10 +24,15 @@ public class LevelSelectController : MonoBehaviour
     /// <param name="allLevelProgress"></param>
     public void LoadLevelSelection(LevelProgress[] allLevelProgress)
     {
+        if(allLevelProgress == null) {
+            Debug.LogError("Level Profress is null");
+            return;
+        }
+
         for (int i = 1; i < allLevelProgress.Length; i++) {
-            LevelProgress progress = allLevelProgress[i];
+            LevelProgress level = allLevelProgress[i];
             LevelSelectionButton button = Instantiate(m_buttonPrefab, m_contentXform);
-            button.Initialize(i, true, progress.IsPerfect);
+            button.Setup(i, level.IsUnlocked, level.IsPerfect);
         }
     }
 }

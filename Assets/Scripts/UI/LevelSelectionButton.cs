@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// The icon that appears on the level selection screens
 /// Controls the states of button as well as the image for the button and level number
 /// </summary>
-public class LevelSelectionButton : MonoBehaviour
+public class LevelSelectionButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     /// <summary>
     /// The button component to disable/enable
@@ -63,9 +64,32 @@ public class LevelSelectionButton : MonoBehaviour
     int m_level;
 
     /// <summary>
-    /// Initializes the button as locked, not interactible, and with no level number
+    /// Changes the appereance and the level this buttton transitions to when clicked
     /// </summary>
-    void Start()
+    /// <param name="level"></param>
+    /// <param name="isUnlocked"></param>
+    /// <param name="isPerfect"></param>
+    public void Setup(int level, bool isUnlocked, bool isPerfect)
+    {
+        InitializeDefaults();
+
+        m_level = level;
+
+        if (isUnlocked) {
+            m_button.interactable = true;
+            m_image.sprite = m_unlockedSprite;
+            m_levelNumberText.text = m_level.ToString();
+        }
+
+        if (isPerfect) {
+            m_image.sprite = m_perfectSprite;
+        }
+    }
+
+    /// <summary>
+    /// Sets up the defaults for this button
+    /// </summary>
+    private void InitializeDefaults()
     {
         if (!m_button) {
             m_button = GetComponentInChildren<Button>();
@@ -79,61 +103,45 @@ public class LevelSelectionButton : MonoBehaviour
             m_levelNumberText = GetComponentInChildren<Text>();
         }
 
+        // Default
         m_button.interactable = false;
         m_image.sprite = m_lockedSprite;
         m_levelNumberText.text = "";
     }
 
     /// <summary>
-    /// Highlight
+    /// Mouse over effect
     /// </summary>
-    void OnMouseEnter()
+    /// <param name="eventData"></param>
+    public void OnPointerEnter(PointerEventData eventData)
     {
         m_levelNumberText.color = m_highlightedTextColor;
     }
 
     /// <summary>
-    /// Reset color
+    /// Mouse left button
     /// </summary>
-    void OnMouseExit()
+    /// <param name="eventData"></param>
+    public void OnPointerExit(PointerEventData eventData)
     {
         m_levelNumberText.color = m_normalTextColor;
     }
 
     /// <summary>
-    /// Reset color
+    /// On Mouse Click
     /// </summary>
-    void OnMouseDown()
+    /// <param name="eventData"></param>
+    public void OnPointerClick(PointerEventData eventData)
     {
-        m_levelNumberText.color = m_normalTextColor;
+        OnClick();
     }
 
     /// <summary>
-    /// Changes the appereance and the level this buttton transitions to when clicked
-    /// </summary>
-    /// <param name="level"></param>
-    /// <param name="isUnlocked"></param>
-    /// <param name="isPerfect"></param>
-    public void Initialize(int level, bool isUnlocked, bool isPerfect)
-    {
-        m_level = level;
-
-        if (isUnlocked) {
-            m_button.interactable = true;
-            m_image.sprite = m_unlockedSprite;
-        }
-
-        if (isPerfect) {
-            m_image.sprite = m_perfectSprite;
-        }
-    }
-
-    /// <summary>
-    /// Disables the button so that it can only be clicked once
-    /// Triggers a transitions to the level this button represents
+    /// On click
     /// </summary>
     public void OnClick()
     {
+        m_levelNumberText.color = m_normalTextColor;
         m_button.interactable = false;
         GameManager.instance.TransitionToLevel(m_level);
     }

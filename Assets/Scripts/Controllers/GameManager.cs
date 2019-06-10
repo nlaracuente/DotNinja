@@ -133,7 +133,7 @@ public class GameManager : MonoBehaviour
     /// The container for loading and storing the data to save
     /// </summary>
     SavedData m_savedData = new SavedData();
-    public LevelProgress[] AllLevelProgress { get { return m_savedData.Progress; } }
+    public LevelProgress[] AllLevelProgress { get { return m_savedData.Levels; } }
 
     /// <summary>
     /// A reference to the current active menu controller
@@ -222,25 +222,24 @@ public class GameManager : MonoBehaviour
         }
 
         AudioManager.instance.Initialize(musicVolume, fxVolume);
-        CurrentMenuController.OnMainMenuLoad();
     }
 
     /// <summary>
     /// Stores the given level's progress in the <see cref="m_savedData"/> to save later
     /// </summary>
     /// <param name="level"></param>
-    /// <param name="isCompleted"></param>
+    /// <param name="isUnlocked"></param>
     /// <param name="isPrefect"></param>
-    void SetLevelProgress(int level, bool isCompleted, bool isPrefect)
+    void SetLevelProgress(int level, bool isUnlocked, bool isPrefect = false)
     {
-        if (level > 0 && level < m_savedData.Progress.Length) {
+        if (level > 0 && level < m_savedData.Levels.Length) {
 
             // Do not override if the existing progress is better
             // by checking the given values are the best value to store
-            LevelProgress progress = m_savedData.Progress[level];
+            LevelProgress progress = m_savedData.Levels[level];
 
             // Since these default to FALSE we only update them if they are TRUE
-            if (isCompleted) {
+            if (isUnlocked) {
                 progress.IsUnlocked = true;
             }
 
@@ -248,8 +247,7 @@ public class GameManager : MonoBehaviour
                 progress.IsPerfect = true;
             }
 
-            m_savedData.Progress[level] = progress;
-            SaveGame();
+            m_savedData.Levels[level] = progress;
         }
     }
 
@@ -318,7 +316,7 @@ public class GameManager : MonoBehaviour
     /// <param name="level"></param>
     public void TransitionToLevel(int level)
     {
-        CurrentLevel = 1;
+        CurrentLevel = level;
         LoadCurrentLevel();
     }
 
@@ -420,9 +418,14 @@ public class GameManager : MonoBehaviour
         menu.ShowLevelCompletedMenu(CurrentLevel, TotalMoves, controller.MaxMoves);
 
         // Store the results
-        bool isCompleted = true;
+        bool isUnlocked = true;
         bool isPerfect = TotalMoves <= controller.MaxMoves;
-        SetLevelProgress(CurrentLevel, isCompleted, isPerfect);
+        SetLevelProgress(CurrentLevel, isUnlocked, isPerfect);
+
+        // We also want to update the next level as "unlocked"
+        SetLevelProgress(CurrentLevel + 1, isUnlocked);
+
+        SaveGame();
     }
 
     /// <summary>

@@ -35,7 +35,7 @@ public class SavedData
     /// <summary>
     /// A collection of state of each level
     /// </summary>
-    public LevelProgress[] Progress { get; set; }
+    public LevelProgress[] Levels { get; set; }
 
     /// <summary>
     /// Defaults the save data to the given values
@@ -49,6 +49,9 @@ public class SavedData
         FxVolume = fxVol;
 
         // +1 to account for the fact that level zero does not exist
-        Progress = new LevelProgress[contentSize + 1];
+        Levels = new LevelProgress[contentSize + 1];
+
+        // First level is always marked as "unlocked"
+        Levels[1].IsUnlocked = true;
     }
 }

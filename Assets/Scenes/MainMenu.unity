@@ -199,6 +199,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7346258003619984250, guid: 55fda7e0d97a5c64f8a11bbad3b0f4ce,
+        type: 3}
+      propertyPath: m_saveFileName
+      value: DotNinja.beta2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 55fda7e0d97a5c64f8a11bbad3b0f4ce, type: 3}
 --- !u!224 &615844388 stripped
@@ -792,6 +797,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4235060433573487285, guid: 87c51e248b4048047b25a394eb209952,
+        type: 3}
+      propertyPath: m_musicVolume
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4235060433573487285, guid: 87c51e248b4048047b25a394eb209952,
+        type: 3}
+      propertyPath: m_fxsVolume
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 87c51e248b4048047b25a394eb209952, type: 3}
 --- !u!1 &1704261452
@@ -1140,6 +1155,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1032974786599079831, guid: eb20acf6a6befbc4a92c0fa8683a93cb,
+        type: 3}
+      propertyPath: m_RaycastTarget
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1032974786374952830, guid: eb20acf6a6befbc4a92c0fa8683a93cb,
+        type: 3}
+      propertyPath: m_StartAxis
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1032974785347564676, guid: eb20acf6a6befbc4a92c0fa8683a93cb,
         type: 3}

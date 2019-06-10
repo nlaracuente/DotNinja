@@ -49,21 +49,6 @@ public class MenuController : MonoBehaviour
     LevelSelectController m_levelSelectController;
 
     /// <summary>
-    /// Initializes main menu 
-    /// </summary>
-    public void OnMainMenuLoad()
-    {
-        if (m_mainMenuGO != null) {
-            m_mainMenuGO.SetActive(true);
-        }
-
-        if (m_levelSelectionMenuGO != null) {
-            m_levelSelectController = FindObjectOfType<LevelSelectController>();
-            m_levelSelectionMenuGO.SetActive(false);
-        }
-    }
-
-    /// <summary>
     /// Default menu to closed
     /// Ensures volume sliders match current volume levels
     /// </summary>
@@ -81,6 +66,15 @@ public class MenuController : MonoBehaviour
 
         if (m_fxVolumeSlider != null) {
             m_fxVolumeSlider.SetValue(AudioManager.instance.FxVolume);
+        }
+
+        if (m_mainMenuGO != null) {
+            m_mainMenuGO.SetActive(true);
+        }
+
+        if (m_levelSelectionMenuGO != null) {
+            m_levelSelectController = FindObjectOfType<LevelSelectController>();
+            m_levelSelectionMenuGO.SetActive(false);
         }
     }
 
