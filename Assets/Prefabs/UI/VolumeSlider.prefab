@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1267613798829437024}
   m_Layer: 5
-  m_Name: MusicVolumeSolider
+  m_Name: VolumeSlider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
