@@ -124,10 +124,13 @@ public class PathRenderer : MonoBehaviour
 
     /// <summary>
     /// Shows paths preview
+    /// We will not render on Mobile
     /// </summary>
     private void Update()
     {
-        PreviewPath();
+        if(Application.platform != RuntimePlatform.Android) {
+            PreviewPath();
+        }
     }
 
     /// <summary>
@@ -208,7 +211,7 @@ public class PathRenderer : MonoBehaviour
     /// </summary>
     void PreviewPath()
     {
-        if (PreventAction() || GameManager.instance.IsGamePaused)
+        if (PreventAction())
         {
             m_previewPathRenderer.positionCount = 0;
             return;
@@ -401,7 +404,11 @@ public class PathRenderer : MonoBehaviour
     /// <returns></returns>
     bool PreventAction()
     {
-        return !GameManager.instance.IsLevelLoaded || m_player.IsMoving || m_player.IsPlayerDead || GameManager.instance.IsLevelCompleted;
+        return !GameManager.instance.IsLevelLoaded || 
+               m_player.IsMoving ||
+               m_player.IsPlayerDead || 
+               GameManager.instance.IsLevelCompleted ||
+               GameManager.instance.IsGamePaused;
     }
 
     /// <summary>

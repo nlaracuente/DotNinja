@@ -242,13 +242,6 @@ public class Player : MonoBehaviour
                 break;
             }
 
-            //// The last connection will only be removed when it is the door
-            //// This is so that the connector remains as the target 
-            //if (m_pathRenderer.Connectors.Count == 1 && door == null) {
-            //    connector.ConnectorTargeted();
-            //    break;
-            //}
-
             // Disconnect connector
             connector.Disconnected();
             m_pathRenderer.Connectors.Remove(connector);

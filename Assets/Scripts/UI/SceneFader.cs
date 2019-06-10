@@ -64,7 +64,7 @@ public class SceneFader : MonoBehaviour
         float current = m_faderImage.color.a;
 
         while (!Mathf.Approximately(current, end))
-        {
+        {            
             yield return new WaitForEndOfFrame();
             current = Mathf.Clamp01(current + increment);
             Color newColor = new Color(m_fadeColor.r, m_fadeColor.g, m_fadeColor.b, current);

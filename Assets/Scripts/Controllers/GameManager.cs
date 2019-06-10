@@ -159,6 +159,11 @@ public class GameManager : MonoBehaviour
     IEnumerator m_loadLevelRoutine;
 
     /// <summary>
+    /// Holds the routine for loading the next level to avoid re-triggering
+    /// </summary>
+    IEnumerator m_nextLevelRoutine;
+
+    /// <summary>
     /// Sets up instance
     /// </summary>
     private void Awake()
@@ -294,19 +299,12 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Load the level selection menu based on player's saved data
-    /// </summary>
-    public void OnMainMenuStartButtonClicked()
-    {
-
-    }    
-
-    /// <summary>
     /// Resets the level counter to 1 and loads the level
     /// </summary>
     public void StartGame()
     {
-        TransitionToLevel(1);
+        int level = 1;
+        TransitionToLevel(level);
     }
 
     /// <summary>
@@ -338,6 +336,8 @@ public class GameManager : MonoBehaviour
             return;
         }
 
+        Debug.Log("On Level Load");
+
         // Ensures game manager forgets about a previous level
         ResetLevel();
 
@@ -353,11 +353,11 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void ResetLevel()
     {
-        m_fader = null;
         IsLevelLoaded = false;
         IsLevelCompleted = false;
         IsGamePaused = false;
         TotalMoves = 0;
+        m_nextLevelRoutine = null;
     }
 
     /// <summary>
@@ -378,6 +378,7 @@ public class GameManager : MonoBehaviour
     {
         yield return StartCoroutine(Fader.FadeRoutine(1f, 0f, m_fadeInDelay));
         IsLevelLoaded = true;
+        m_loadLevelRoutine = null;
     }
 
     /// <summary>
@@ -409,23 +410,23 @@ public class GameManager : MonoBehaviour
 
         // Make the player exit
         AudioManager.instance.PlayLevelCompletedSound(ActivePlayer.transform);
-        yield return StartCoroutine(ActivePlayer.LevelCompletedAnimationRoutine());
-
-
-        // Display the results
-        LevelController controller = FindObjectOfType<LevelController>();
-        MenuController menu = FindObjectOfType<MenuController>();
-        menu.ShowLevelCompletedMenu(CurrentLevel, TotalMoves, controller.MaxMoves);
+        StartCoroutine(ActivePlayer.LevelCompletedAnimationRoutine());
 
         // Store the results
+        LevelController controller = FindObjectOfType<LevelController>();
+        MenuController menu = FindObjectOfType<MenuController>();
+
         bool isUnlocked = true;
         bool isPerfect = TotalMoves <= controller.MaxMoves;
-        SetLevelProgress(CurrentLevel, isUnlocked, isPerfect);
 
+        SetLevelProgress(CurrentLevel, isUnlocked, isPerfect);
         // We also want to update the next level as "unlocked"
         SetLevelProgress(CurrentLevel + 1, isUnlocked);
 
         SaveGame();
+
+        // Display the results
+        menu.ShowLevelCompletedMenu(CurrentLevel, TotalMoves, controller.MaxMoves);
     }
 
     /// <summary>
@@ -433,6 +434,21 @@ public class GameManager : MonoBehaviour
     /// Loads the credit if at the last level
     /// </summary>
     public void LoadNextLevel()
+    {
+        // Already running
+        if (m_nextLevelRoutine != null) {
+            return;
+        }
+
+        m_nextLevelRoutine = LoadNextLevelRoutine();
+        StartCoroutine(m_nextLevelRoutine);
+    }
+
+    /// <summary>
+    /// Handles moving to the next level
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator LoadNextLevelRoutine()
     {
         // Defaults action to credits screen
         Action transitionTo = TransitionToCredits;
@@ -444,12 +460,15 @@ public class GameManager : MonoBehaviour
             transitionTo = LoadCurrentLevel;
         }
 
-        StartCoroutine(FadeScreenAndTransitionTo(transitionTo));
+        m_nextLevelRoutine = FadeScreenAndTransitionTo(transitionTo);
+        yield return StartCoroutine(m_nextLevelRoutine);
 
-        // Not always reset
-        // This is a temporary hack
-        IsLevelCompleted = false;
-        IsGamePaused = false;
+        // Ensure nothing else is running
+        // This is curcial or else the level loading sequence might overlap when level ending sequence
+        StopAllCoroutines();
+
+        m_nextLevelRoutine = null;
+        IsLevelLoaded = false;
     }
 
     /// <summary>
