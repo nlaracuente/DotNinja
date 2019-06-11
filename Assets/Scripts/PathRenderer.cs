@@ -152,6 +152,11 @@ public class PathRenderer : MonoBehaviour
     /// </summary>
     public void ResetConnections(bool isTethered = false, Door door = null)
     {
+        // There are no connections
+        if (Connectors.Count == 0) {
+            return;
+        }
+
         // When tethered we need to skip the first connection
         // since the player is hanging from it
         var index = isTethered ? 1 : 0;
@@ -175,7 +180,6 @@ public class PathRenderer : MonoBehaviour
         if (count >= 0) {
             Connectors.RemoveRange(index, count);
         }
-        
 
         // Ensure the first connector is still targeted
         if(index > 0) {

@@ -105,6 +105,12 @@ public class Player : MonoBehaviour
     int m_defaultLayer;
 
     /// <summary>
+    /// The connector the player is current at
+    /// Used for rendering the roap preview, path, and updating the connector's graphic
+    /// </summary>
+    public Connector CurrentConnector { get; set; } = null;
+
+    /// <summary>
     /// Subscribes to all connectors
     /// </summary>
     void Start()
@@ -174,29 +180,21 @@ public class Player : MonoBehaviour
         m_pathRenderer.ResetCursor();
         AudioManager.instance.PlayReleaseSound();
 
-        while (m_pathRenderer.Connectors.Count > 0)
-        {
+        while (m_pathRenderer.Connectors.Count > 0) {
             Connector connector = m_pathRenderer.Connectors[0];
             Vector2 destination = connector.Anchor.position;
             bool skipDelay = true;
 
-            // When we are already there then don't play the sound
-            // This is a side effect of not removing the last connector to keep the sprite that shows it is connected
-            if (transform.position != connector.Anchor.position) {
+            // Need to move to the connector
+            if (connector != CurrentConnector) {
                 skipDelay = false;
                 AudioManager.instance.PlayStartMovingSound();
-
-                // Increase total moves made
                 GameManager.instance.TotalMoves++;
             }
 
-            // Make player look at the direction it is going to
-            var dir = connector.transform.position - transform.position;
-            var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+            LookAtConnector(connector);
 
-            while (Vector2.Distance(transform.position, destination) > .001f)
-            {
+            while (Vector2.Distance(transform.position, destination) > .001f) {
                 Vector3 position = Vector2.MoveTowards(transform.position, destination, m_moveSpeed * Time.deltaTime);
 
                 // Keep the player's current Z position
@@ -206,54 +204,83 @@ public class Player : MonoBehaviour
                 m_pathRenderer.UpdatePlayerPositionInLineRenderer();
                 yield return new WaitForFixedUpdate();
 
-                // If moving to a retractable one and it retracts
-                // Then we want to trigger a fall
-                // Wait for the death to be registered
+                // Moving to a connector that has retracted
+                // Trigger death which cancels this routine
                 if (connector.IsRetracted) {
                     TriggerDeath();
                     yield return new WaitForEndOfFrame();
                 }
             }
 
-            // HACKS!
-            // Reset rotation
-
-            // Landed on the bottom row or the door
-            if (transform.position.y <= 1 ) {
-                transform.rotation = Quaternion.identity;
-
-            // Landed on the top row
-            } else {
-                transform.rotation = Quaternion.Euler(0f, 0f, 180f);
-            }
-            
+            ResetPlayerRotation();
             transform.position = destination;
 
             // Now that the player has landed we can trigger this routine
             connector.TriggerRetractRoutine();
 
-            // If this is a door and we have the key then stop all further connections
-            // to trigger the door animation and end of level
+            // If we are at the door with all keys 
+            // Then trigger level completed routine
             Door door = connector.GetComponentInParent<Door>();
-
-            // Reached the door with the key
             if (door != null && AllKeysCollected()) {
+                CurrentConnector = null;
                 ResetConnections(false, door);
                 GameManager.instance.LevelCompleted(door);
                 break;
             }
 
-            // Disconnect connector
-            connector.Disconnected();
-            m_pathRenderer.Connectors.Remove(connector);
-            m_pathRenderer.DrawConnections();
+            // Before removing we will assign this connector
+            // as the player's if this is the last connector on the list
+            if (m_pathRenderer.Connectors.Count == 1) {
+                CurrentConnector = connector;
+            }
+
+            // Removes the connector from the list of connections
+            DisconnectConnector(connector);
 
             if (!skipDelay) {
                 yield return new WaitForSeconds(m_connectionDealy);
-            }
+            }            
         }
 
         IsMoving = false;
+    }
+
+    /// <summary>
+    /// Removes the given connection from the list
+    /// </summary>
+    /// <param name="connector"></param>
+    void DisconnectConnector(Connector connector)
+    {
+        connector.Disconnected();
+        m_pathRenderer.Connectors.Remove(connector);
+        m_pathRenderer.DrawConnections();
+    }
+
+    /// <summary>
+    /// Rotates the player based on their currrent position
+    /// This is sort of a hack but it works
+    /// </summary>
+    void ResetPlayerRotation()
+    {
+        // Is on the bottom row or at the door
+        if (transform.position.y <= 1) {
+            transform.rotation = Quaternion.identity;
+
+        // Is on the top row
+        } else {
+            transform.rotation = Quaternion.Euler(0f, 0f, 180f);
+        }
+    }
+
+    /// <summary>
+    /// Rotates the player to make it look at the connector
+    /// </summary>
+    /// <param name="connector"></param>
+    void LookAtConnector(Connector connector)
+    {
+        var dir = connector.transform.position - transform.position;
+        var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
     }
 
     /// <summary>
@@ -276,6 +303,7 @@ public class Player : MonoBehaviour
     public void TriggerDeath()
     {
         IsPlayerDead = true;
+        CurrentConnector = null;
         StopAllCoroutines();
         ResetConnections();
         StartCoroutine(RespawnRoutine());
