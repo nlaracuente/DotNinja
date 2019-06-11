@@ -110,6 +110,11 @@ public class PathRenderer : MonoBehaviour
     }
 
     /// <summary>
+    /// Returns the player's current connector
+    /// </summary>
+    Connector PlayerConnector { get { return m_player.CurrentConnector; } }
+
+    /// <summary>
     /// Sets refrences, resets the line renderers, and subscribes to connectors
     /// </summary>
     private void Start()
@@ -234,8 +239,7 @@ public class PathRenderer : MonoBehaviour
     /// <param name="connector"></param>
     public void OnConnectorSelected(Connector connector)
     {
-        if (PreventAction())
-        {
+        if (PreventAction()) {
             return;
         }
 
@@ -265,7 +269,7 @@ public class PathRenderer : MonoBehaviour
         // Last connector therefore player wants to move to it
         } else {
             m_player.Move();
-        }        
+        }
     }
 
     /// <summary>
@@ -338,20 +342,22 @@ public class PathRenderer : MonoBehaviour
     /// <param name="connector"></param>
     void UpdateCursorOnConnector(Connector connector)
     {
-        // Update the cursor icon based on the action that can be done
-        if (Connectors.Contains(connector)) {
+        // Connector can be added
+        if (!Connectors.Contains(connector)) {
+            Cursor.SetCursor(m_selectConnectionCursor, m_cursorOffset, CursorMode.Auto);
+
+        // Connector already on the list
+        } else {
             Connector lastConnector = Connectors.LastOrDefault();
 
-            // Target Connector
+            // Can move to this connector
             if (lastConnector == connector) {
                 Cursor.SetCursor(m_goToConnectionCursor, m_cursorOffset, CursorMode.Auto);
 
-                // Connector can be removed
+            // Can reset connections to this connector
             } else {
                 Cursor.SetCursor(m_removeConnectionCursor, m_cursorOffset, CursorMode.Auto);
             }
-        } else {
-            Cursor.SetCursor(m_selectConnectionCursor, m_cursorOffset, CursorMode.Auto);
         }
     }
 
@@ -416,6 +422,9 @@ public class PathRenderer : MonoBehaviour
             return;
         }
 
+        // We want to know the last connector to keep it as the target
+        Connector lastConnector = Connectors.LastOrDefault();
+
         // Reset positions to current count
         m_activePathRenderer.positionCount = Connectors.Count + 1;
 
@@ -423,21 +432,35 @@ public class PathRenderer : MonoBehaviour
         Vector3[] positions = new Vector3[m_activePathRenderer.positionCount];
 
         // First position is always the player's
-        positions[0] = PlayerPosition;
-        for (int i = 1; i <= Connectors.Count; i++)
-        {
+        // or their connector when we have one
+        positions[0] = PlayerConnector ? PlayerConnector.transform.position : PlayerPosition;
+
+        for (int i = 1; i <= Connectors.Count; i++) {
             Connector connector = Connectors[i - 1];
             Vector3 position = new Vector3(connector.transform.position.x, connector.transform.position.y, m_lineZPosition);
 
             // Place the Z away from the player
             positions[i] = position;
-            connector.ConnectorTethered();
+
+            // Connector is set as target if it's the last one
+            if (connector == lastConnector) {
+                lastConnector.ConnectorTargeted();
+            } else {
+                connector.ConnectorTethered();
+            }
         }
 
-        // Make sure the last one is set to targeted
-        Connector lastConnetor = Connectors.LastOrDefault();
-        if (lastConnetor != null) {
-            lastConnetor.ConnectorTargeted();
+        // Update the player's connector accordingly
+        if (PlayerConnector) {
+
+            // Is the target
+            if (Connectors.Count == 0) {
+                PlayerConnector.ConnectorTargeted();
+
+            // Is tethered
+            } else if (PlayerConnector != lastConnector) {
+                PlayerConnector.ConnectorTethered();
+            }
         }
 
         m_activePathRenderer.SetPositions(positions);
@@ -455,5 +478,23 @@ public class PathRenderer : MonoBehaviour
         }
 
         m_activePathRenderer.SetPosition(0, PlayerPosition);
+    }
+
+    /// <summary>
+    /// Removes the given connector marking it as disconnected
+    /// Except if the connector is the one the player is currently at
+    /// then it is marked as targeted
+    /// </summary>
+    /// <param name="connector"></param>
+    public void RemoveConnector(Connector connector)
+    {
+        if (m_player.CurrentConnector == connector) {
+            connector.ConnectorTargeted();
+        } else {
+            connector.Disconnected();
+        }
+
+        Connectors.Remove(connector);
+        DrawConnections();
     }
 }

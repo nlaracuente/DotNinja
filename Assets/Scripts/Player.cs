@@ -194,6 +194,13 @@ public class Player : MonoBehaviour
 
             LookAtConnector(connector);
 
+            // Since the player is moving
+            // we want to disconnect the current connector
+            if (CurrentConnector) {
+                CurrentConnector.Disconnected();
+                CurrentConnector = null;
+            }
+
             while (Vector2.Distance(transform.position, destination) > .001f) {
                 Vector3 position = Vector2.MoveTowards(transform.position, destination, m_moveSpeed * Time.deltaTime);
 
@@ -228,8 +235,9 @@ public class Player : MonoBehaviour
                 break;
             }
 
-            // Before removing we will assign this connector
-            // as the player's if this is the last connector on the list
+            // Save the last connector as the current
+            // before any disconnects so that we don't see
+            // the incorrect sprite change
             if (m_pathRenderer.Connectors.Count == 1) {
                 CurrentConnector = connector;
             }
@@ -251,9 +259,7 @@ public class Player : MonoBehaviour
     /// <param name="connector"></param>
     void DisconnectConnector(Connector connector)
     {
-        connector.Disconnected();
-        m_pathRenderer.Connectors.Remove(connector);
-        m_pathRenderer.DrawConnections();
+        m_pathRenderer.RemoveConnector(connector);
     }
 
     /// <summary>
@@ -303,7 +309,14 @@ public class Player : MonoBehaviour
     public void TriggerDeath()
     {
         IsPlayerDead = true;
+
+        // Ensures the current connector's sprite resets to disconnected
+        if (CurrentConnector) {
+            CurrentConnector.Disconnected();
+        }
+
         CurrentConnector = null;
+
         StopAllCoroutines();
         ResetConnections();
         StartCoroutine(RespawnRoutine());

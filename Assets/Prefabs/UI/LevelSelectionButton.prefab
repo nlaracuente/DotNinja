@@ -189,8 +189,8 @@ MonoBehaviour:
   m_lockedSprite: {fileID: 21300000, guid: f336705709b3bab43b47b3af7e8fc277, type: 3}
   m_unlockedSprite: {fileID: 21300000, guid: 6b440a6682e0c9f489dff7b2945836f8, type: 3}
   m_perfectSprite: {fileID: 21300000, guid: 2749b5f80f391754abe4bde8ab0e3aeb, type: 3}
-  m_highlightedTextColor: {r: 1, g: 0, b: 0, a: 1}
-  m_normalTextColor: {r: 0, g: 0, b: 0, a: 1}
+  m_highlightedTextColor: {r: 0.86666673, g: 0.20000002, b: 0.20000002, a: 1}
+  m_normalTextColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
 --- !u!114 &7594766654085992779
 MonoBehaviour:
   m_ObjectHideFlags: 0
