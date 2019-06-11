@@ -147,16 +147,16 @@ public class Player : MonoBehaviour
             return;
         }
 
-        ResetConnections(transform.position != m_initialPosition);
+        ResetConnections();
     }
 
     /// <summary>
     /// Clears all active connections and updates the line renderer
     /// </summary>
-    private void ResetConnections(bool isTethered = false, Door door = null)
+    private void ResetConnections(Door door = null)
     {
         // Notify if the player is tethered or not
-        m_pathRenderer.ResetConnections(isTethered, null);
+        m_pathRenderer.ResetConnections(null);
     }
 
     /// <summary>
@@ -223,7 +223,7 @@ public class Player : MonoBehaviour
             Door door = connector.GetComponentInParent<Door>();
             if (door != null && AllKeysCollected()) {
                 CurrentConnector = null;
-                ResetConnections(false, door);
+                ResetConnections(door);
                 GameManager.instance.LevelCompleted(door);
                 break;
             }

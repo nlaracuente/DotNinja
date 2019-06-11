@@ -150,44 +150,21 @@ public class PathRenderer : MonoBehaviour
     /// Clears active connections
     /// Removes all positions from the active path renderer
     /// </summary>
-    public void ResetConnections(bool isTethered = false, Door door = null)
+    public void ResetConnections(Door door = null)
     {
         // There are no connections
         if (Connectors.Count == 0) {
             return;
         }
 
-        // When tethered we need to skip the first connection
-        // since the player is hanging from it
-        var index = isTethered ? 1 : 0;
-
-        // We have connections that will be cleared
-        // Let's play the sound
-        if( (isTethered && Connectors.Count > 1) || 
-            (!isTethered && Connectors.Count > 0) ) {
-
-            // Is triggered after reaching the door
-            if(door == null) {
-                AudioManager.instance.PlayConnectSound();
-            }
-        }
-
-        for (int i = index; i < Connectors.Count; i++) {
+        // Disconnect first to update sprites
+        for (int i = 0; i < Connectors.Count; i++) {
             Connectors[i].Disconnected();
         }
 
-        int count = Connectors.Count - index;
-        if (count >= 0) {
-            Connectors.RemoveRange(index, count);
-        }
+        Connectors.Clear();
 
-        // Ensure the first connector is still targeted
-        if(index > 0) {
-            Connectors[0].ConnectorTargeted();
-        }
-
-        if (m_activePathRenderer)
-        {
+        if (m_activePathRenderer) {
             m_activePathRenderer.positionCount = 0;
         }
 
