@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8155474257684307345}
   - component: {fileID: 8522682891188475625}
   - component: {fileID: 2891631775500940602}
-  - component: {fileID: -527230515448623604}
+  - component: {fileID: 635676853123879700}
   m_Layer: 5
   m_Name: MenuButtonIcon
   m_TagString: Untagged
@@ -133,6 +133,23 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8155474257684307345}
   m_OnClick:
     m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+--- !u!114 &635676853123879700
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4841942988204976685}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b69b53f9e797bb4187bc823f183fb9c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnClickEvent:
+    m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 8522682891188475625}
         m_MethodName: OnClicked
@@ -145,17 +162,5 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-    m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
---- !u!114 &-527230515448623604
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4841942988204976685}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2284cbc525afcc84a9969a15b5ec1c95, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

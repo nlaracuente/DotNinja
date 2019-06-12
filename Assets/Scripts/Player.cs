@@ -1,11 +1,12 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// The player controlled avatar
 /// </summary>
 [RequireComponent(typeof(Rigidbody2D), typeof(SpriteRenderer))]
-public class Player : MonoBehaviour
+public class Player : MonoBehaviour, IPointerDownHandler
 {
     /// <summary>
     /// How fast the player moves towards the next connector
@@ -137,18 +138,31 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
-    /// Removes all active connections
+    /// Resets connections
     /// </summary>
-    void OnMouseDown()
+    /// <param name="eventData"></param>
+    public void OnPointerDown(PointerEventData eventData)
     {
-        // Ignore when moving
-        if (PreventAction())
-        {
+        if (PreventAction()) {
             return;
         }
 
         ResetConnections();
     }
+
+    /// <summary>
+    /// Removes all active connections
+    /// </summary>
+    //void OnMouseDown()
+    //{
+    //    // Ignore when moving
+    //    if (PreventAction())
+    //    {
+    //        return;
+    //    }
+
+    //    ResetConnections();
+    //}
 
     /// <summary>
     /// Clears all active connections and updates the line renderer

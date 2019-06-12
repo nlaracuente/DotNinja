@@ -133,7 +133,7 @@ public class PathRenderer : MonoBehaviour
     private void Update()
     {
         if(Application.platform != RuntimePlatform.Android) {
-            PreviewPath();
+            // PreviewPath();
         }
     }
 
@@ -311,8 +311,7 @@ public class PathRenderer : MonoBehaviour
     /// <param name="connector"></param>
     public void OnMouseEnterConnector(Connector connector)
     {
-        if (PreventAction())
-        {
+        if (PreventAction()){
             return;
         }
 
@@ -405,8 +404,15 @@ public class PathRenderer : MonoBehaviour
     /// <returns></returns>
     bool IsConnectionPossible(Vector2 start, Vector2 end)
     {
-        var hit = Physics2D.Linecast(start, end, m_obstacleMask);
-        return hit.collider == null;
+        bool isPossible = true;
+
+        // Only check when not on mobile
+        if (Application.platform != RuntimePlatform.Android) {
+            var hit = Physics2D.Linecast(start, end, m_obstacleMask);
+            isPossible = hit.collider == null;
+        }
+
+        return isPossible;
     }
 
     /// <summary>

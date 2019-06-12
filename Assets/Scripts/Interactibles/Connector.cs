@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// The different types of connectors which defines its behavior
@@ -13,7 +14,7 @@ public enum ConnectorType
 /// <summary>
 /// A connector is an anchor point that the player can connect to in order to towards it
 /// </summary>
-public class Connector : MonoBehaviour
+public class Connector : MonoBehaviour, IPointerDownHandler
 {
     /// <summary>
     /// Events for the different states of a connector
@@ -216,48 +217,63 @@ public class Connector : MonoBehaviour
     }
 
     /// <summary>
+    /// Handles the onclick event
+    /// </summary>
+    /// <param name="eventData"></param>
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        if (IsRetracted) {
+            return;
+        }
+
+        OnSelectedEvent?.Invoke(this);
+    }
+
+    #region PC_AND_DESKTOP_ONLY
+    /// <summary>
     /// /// Dispatches on mouse over event
     /// If the select or deselect buttons are pressed 
     /// then it sends their respective events
     /// </summary>
-    private void OnMouseEnter()
-    {
-        if (IsRetracted) {
-            return;
-        }
+    //private void OnMouseEnter()
+    //{
+    //    if (IsRetracted) {
+    //        return;
+    //    }
 
-        OnMouseEnterEvent?.Invoke(this);
-    }
+    //    OnMouseEnterEvent?.Invoke(this);
+    //}
 
     /// <summary>
     /// Dispatch event when clickd on
     /// </summary>
-    private void OnMouseOver()
-    {
-        if (IsRetracted) {
-            return;
-        }
+    //private void OnMouseOver()
+    //{
+    //    if (IsRetracted) {
+    //        return;
+    //    }
 
-        OnMouseOverEvent?.Invoke(this);
+    //    OnMouseOverEvent?.Invoke(this);
 
-        if (Input.GetButtonDown("Select")) {
-            OnSelectedEvent?.Invoke(this);
-        }
-    }
+    //    if (Input.GetButtonDown("Select")) {
+    //        OnSelectedEvent?.Invoke(this);
+    //    }
+    //}
 
     /// <summary>
     /// Dispatches on mouse exit event
     /// </summary>
-    void OnMouseExit()
-    {
-        // Connector is broken, ignore it
-        if (IsRetracted)
-        {
-            return;
-        }
+    //void OnMouseExit()
+    //{
+    //    // Connector is broken, ignore it
+    //    if (IsRetracted)
+    //    {
+    //        return;
+    //    }
 
-        OnMouseExitEvent?.Invoke(this);
-    }
+    //    OnMouseExitEvent?.Invoke(this);
+    //}
+    #endregion
 
     /// <summary>
     /// For debugging purposes to see the change in the editor only

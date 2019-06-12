@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5123930523819711496}
   - component: {fileID: 5123930523819711499}
   - component: {fileID: 1763106344584805593}
+  - component: {fileID: -8400737978665996327}
   m_Layer: 5
   m_Name: MenuButton
   m_TagString: Untagged
@@ -144,3 +145,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2284cbc525afcc84a9969a15b5ec1c95, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-8400737978665996327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5123930523819711501}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b69b53f9e797bb4187bc823f183fb9c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnClickEvent:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
