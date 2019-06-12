@@ -54,6 +54,16 @@ public class GameManager : MonoBehaviour
     string m_mainMenuSceneName = "MainMenu";
 
     /// <summary>
+    /// True when the active scene is the main menu
+    /// </summary>
+    public bool IsMainMenu
+    {
+        get {
+            return SceneManager.GetActiveScene().name == m_mainMenuSceneName;
+        }
+    }
+
+    /// <summary>
     /// The format for scene level names
     /// </summary>
     [SerializeField]

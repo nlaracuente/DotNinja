@@ -87,10 +87,17 @@ public class MenuController : MonoBehaviour
             string text = string.Format("Level {0}", GameManager.instance.CurrentLevel);
             m_levelCounter.text = text;
         }
+
+        // Try to load the level select
+        if (GameManager.instance.IsMainMenu) {
+            LoadLevelSelect();
+        }
+
     }
 
     /// <summary>
     /// Loads the level selection menu 
+    /// Only works if the current scene is the main menu
     /// </summary>
     public void LoadLevelSelect()
     {
@@ -98,11 +105,6 @@ public class MenuController : MonoBehaviour
             m_mainMenuGO.SetActive(false);
             m_levelSelectionMenuGO.SetActive(true);
             m_levelSelectController.LoadLevelSelection(GameManager.instance.AllLevelProgress);
-        } else {
-            Debug.LogError("Menu Controller is missing a reference to one or more of the following: " +
-                           "main menu go, level selection go, level select controller.\n" + 
-                           "Defaulting to level 1 ");
-            GameManager.instance.StartGame();
         }
     }
 
