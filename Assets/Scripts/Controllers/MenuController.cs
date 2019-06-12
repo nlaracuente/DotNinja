@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// Functions as middle man between the UI buttons and the GameManager
@@ -42,6 +43,12 @@ public class MenuController : MonoBehaviour
     VolumeSlider m_fxVolumeSlider;
 
     /// <summary>
+    /// A reference to the UI text that displays the current level
+    /// </summary>
+    [SerializeField]
+    Text m_levelCounter;
+
+    /// <summary>
     /// A reference to the level select controller
     /// </summary>
     LevelSelectController m_levelSelectController;
@@ -73,6 +80,12 @@ public class MenuController : MonoBehaviour
         if (m_levelSelectionMenuGO != null) {
             m_levelSelectController = FindObjectOfType<LevelSelectController>();
             m_levelSelectionMenuGO.SetActive(false);
+        }
+
+        // Set the current level
+        if(m_levelCounter != null) {
+            string text = string.Format("Level {0}", GameManager.instance.CurrentLevel);
+            m_levelCounter.text = text;
         }
     }
 
