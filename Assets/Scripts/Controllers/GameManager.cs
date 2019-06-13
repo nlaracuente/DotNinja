@@ -289,18 +289,25 @@ public class GameManager : MonoBehaviour
             return false;
         }
 
+        bool isLoaded = false;
+        m_savedData = new SavedData();
+
         BinaryFormatter formatter = new BinaryFormatter();
         FileStream stream = new FileStream(SaveFilePath, FileMode.Open);
         SavedData data = formatter.Deserialize(stream) as SavedData;
         stream.Close();
 
         // File appears to be healthy
-        if(data.Levels != null && data.Levels.Length > 0) {
+        if(data != null && data.Levels != null && data.Levels.Length > 0) {
             m_savedData = data;
         }
 
+        if (m_savedData.Levels != null && m_savedData.Levels.Length > 0) {
+            isLoaded = true;
+        }
+
         // If we have levels then we loaded a game
-        return m_savedData.Levels.Length > 0;
+        return isLoaded;
     }
 
     /// <summary>
