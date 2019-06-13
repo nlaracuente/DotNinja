@@ -18,6 +18,14 @@ public class LevelSelectController : MonoBehaviour
     Transform m_contentXform;
 
     /// <summary>
+    /// Loads the level selection
+    /// </summary>
+    void Start()
+    {
+        LoadLevelSelection(GameManager.instance.AllLevelProgress);
+    }
+
+    /// <summary>
     /// Creates all the level selection buttons 
     /// Initializes them to match the level progress passed
     /// </summary>

@@ -7,18 +7,6 @@ using UnityEngine.UI;
 public class MenuController : MonoBehaviour
 {
     /// <summary>
-    /// A reference to the main menu
-    /// </summary>
-    [SerializeField]
-    GameObject m_mainMenuGO;
-
-    /// <summary>
-    /// A reference to the level selection menu
-    /// </summary>
-    [SerializeField]
-    GameObject m_levelSelectionMenuGO;
-
-    /// <summary>
     /// A reference to the pause menu
     /// </summary>
     [SerializeField]
@@ -49,11 +37,6 @@ public class MenuController : MonoBehaviour
     Text m_levelCounter;
 
     /// <summary>
-    /// A reference to the level select controller
-    /// </summary>
-    LevelSelectController m_levelSelectController;
-
-    /// <summary>
     /// Default menu to closed
     /// Ensures volume sliders match current volume levels
     /// </summary>
@@ -73,38 +56,10 @@ public class MenuController : MonoBehaviour
             m_fxVolumeSlider.SetValue(AudioManager.instance.FxVolume);
         }
 
-        if (m_mainMenuGO != null) {
-            m_mainMenuGO.SetActive(true);
-        }
-
-        if (m_levelSelectionMenuGO != null) {
-            m_levelSelectController = FindObjectOfType<LevelSelectController>();
-            m_levelSelectionMenuGO.SetActive(false);
-        }
-
         // Set the current level
-        if(m_levelCounter != null) {
+        if (m_levelCounter != null) {
             string text = string.Format("Level {0}", GameManager.instance.CurrentLevel);
             m_levelCounter.text = text;
-        }
-
-        // Try to load the level select
-        if (GameManager.instance.IsMainMenu) {
-            LoadLevelSelect();
-        }
-
-    }
-
-    /// <summary>
-    /// Loads the level selection menu 
-    /// Only works if the current scene is the main menu
-    /// </summary>
-    public void LoadLevelSelect()
-    {
-        if (m_mainMenuGO != null && m_levelSelectionMenuGO != null && m_levelSelectController != null) {
-            m_mainMenuGO.SetActive(false);
-            m_levelSelectionMenuGO.SetActive(true);
-            m_levelSelectController.LoadLevelSelection(GameManager.instance.AllLevelProgress);
         }
     }
 
