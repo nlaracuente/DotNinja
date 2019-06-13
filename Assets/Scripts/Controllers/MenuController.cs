@@ -37,6 +37,18 @@ public class MenuController : MonoBehaviour
     Text m_levelCounter;
 
     /// <summary>
+    /// A reference to the main menu game object
+    /// </summary>
+    [SerializeField]
+    GameObject m_mainMenuGO;
+
+    /// <summary>
+    /// A reference to th level select menu game object
+    /// </summary>
+    [SerializeField]
+    GameObject m_levelSelectMenuGO;
+
+    /// <summary>
     /// Default menu to closed
     /// Ensures volume sliders match current volume levels
     /// </summary>
@@ -61,6 +73,35 @@ public class MenuController : MonoBehaviour
             string text = string.Format("Level {0}", GameManager.instance.CurrentLevel);
             m_levelCounter.text = text;
         }
+
+        // For Main Menu
+        if(m_mainMenuGO != null) {
+            m_mainMenuGO.SetActive(true);
+        }
+
+        if (m_levelSelectMenuGO != null) {
+            m_levelSelectMenuGO.SetActive(false);
+        }
+    }
+
+    /// <summary>
+    /// Disables the main menu GO and triggers the level selection to load
+    /// </summary>
+    public void LoadLevelSelect()
+    {
+        if (m_levelSelectMenuGO == null || m_levelSelectMenuGO.GetComponentInChildren<LevelSelectController>() == null) {
+            Debug.Log("Level Select Controller not available. Auto starting game");
+            GameManager.instance.TransitionToLevel(1);
+            return;
+        }
+
+        if (m_mainMenuGO != null) {
+            m_mainMenuGO.SetActive(false);
+        }
+
+        m_levelSelectMenuGO.SetActive(true);
+        LevelSelectController controller = m_levelSelectMenuGO.GetComponentInChildren<LevelSelectController>();
+        controller.LoadLevelSelection(GameManager.instance.AllLevelProgress);
     }
 
     /// <summary>
