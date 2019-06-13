@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour
 
     /// <summary>
     /// Total levels available
-    /// This is exposed to see it in the editor but is auto populated in the <see cref="ApplicationStart"/>
+    /// This is exposed to see it in the editor but is auto populated in the <see cref="InitialGameLoad"/>
     /// </summary>
     [SerializeField]
     int m_totalLevels = 0;
@@ -140,7 +140,17 @@ public class GameManager : MonoBehaviour
     /// The container for loading and storing the data to save
     /// </summary>
     SavedData m_savedData = new SavedData();
-    public LevelProgress[] AllLevelProgress { get { return m_savedData.Levels; } }
+    public LevelProgress[] AllLevelProgress
+    {
+        get {
+
+            if(m_savedData == null || m_savedData.Levels == null || m_savedData.Levels.Length < 1) {
+                InitialGameLoad();
+            }
+
+            return m_savedData.Levels;
+        }
+    }
 
     /// <summary>
     /// A reference to the current active menu controller
@@ -171,6 +181,17 @@ public class GameManager : MonoBehaviour
     IEnumerator m_levelTransitionRoutine;
 
     /// <summary>
+    /// Returns true when the device running is not desktop or web
+    /// At this time we only support Android
+    /// </summary>
+    public bool IsMobileDevice
+    {
+        get {
+            return Application.platform == RuntimePlatform.Android;
+        }
+    }
+
+    /// <summary>
     /// Sets up instance
     /// </summary>
     private void Awake()
@@ -179,18 +200,11 @@ public class GameManager : MonoBehaviour
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
+            InitialGameLoad();
         } else
         {
             Destroy(gameObject);
         }
-    }
-
-    /// <summary>
-    /// Trigger initial load logic
-    /// </summary>
-    void Start()
-    {
-        ApplicationStart();
     }
 
     /// <summary>
@@ -206,11 +220,13 @@ public class GameManager : MonoBehaviour
     /// Initializes the AudioManager
     /// Initializes the main MenuController
     /// </summary>
-    void ApplicationStart()
+    void InitialGameLoad()
     {
         // Default volumes settings to AudioManager's defaults
         float musicVolume = AudioManager.instance.MusicVolume;
         float fxVolume = AudioManager.instance.FxVolume;
+
+        m_savedData = new SavedData();
 
         // Saved game loaded
         if (LoadSavedGame()) {
@@ -275,10 +291,16 @@ public class GameManager : MonoBehaviour
 
         BinaryFormatter formatter = new BinaryFormatter();
         FileStream stream = new FileStream(SaveFilePath, FileMode.Open);
-        m_savedData = formatter.Deserialize(stream) as SavedData;
+        SavedData data = formatter.Deserialize(stream) as SavedData;
         stream.Close();
 
-        return true;
+        // File appears to be healthy
+        if(data.Levels != null && data.Levels.Length > 0) {
+            m_savedData = data;
+        }
+
+        // If we have levels then we loaded a game
+        return m_savedData.Levels.Length > 0;
     }
 
     /// <summary>

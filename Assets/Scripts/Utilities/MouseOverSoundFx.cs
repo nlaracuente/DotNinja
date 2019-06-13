@@ -16,14 +16,6 @@ public class MouseOverSoundFx : MonoBehaviour, IPointerEnterHandler
     }
 
     /// <summary>
-    /// For non UI object
-    /// </summary>
-    private void OnMouseEnter()
-    {
-        PlaySoundFx();
-    }
-
-    /// <summary>
     /// Triggers the AudioManager to play hover sound effects
     /// </summary>
     void PlaySoundFx()

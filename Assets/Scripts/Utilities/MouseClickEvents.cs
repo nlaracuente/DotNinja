@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 /// Handles custom mouse click events
 /// This is to allow us to use the UI.OnClick() events in the editor with an 
 /// </summary>
-public class MouseClickEvents : MonoBehaviour, IPointerDownHandler
+public class MouseClickEvents : MonoBehaviour, IPointerClickHandler
 {
     /// <summary>
     /// The event to dispatch on click
@@ -17,7 +17,7 @@ public class MouseClickEvents : MonoBehaviour, IPointerDownHandler
     /// Dispatch the onclick event
     /// </summary>
     /// <param name="eventData"></param>
-    public void OnPointerDown(PointerEventData eventData)
+    public void OnPointerClick(PointerEventData eventData)
     {
         OnClickEvent?.Invoke();
     }

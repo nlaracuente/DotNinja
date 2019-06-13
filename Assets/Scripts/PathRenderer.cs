@@ -132,8 +132,8 @@ public class PathRenderer : MonoBehaviour
     /// </summary>
     private void Update()
     {
-        if(Application.platform != RuntimePlatform.Android) {
-            // PreviewPath();
+        if(!GameManager.instance.IsMobileDevice) {
+            PreviewPath();
         }
     }
 
@@ -407,7 +407,7 @@ public class PathRenderer : MonoBehaviour
         bool isPossible = true;
 
         // Only check when not on mobile
-        if (Application.platform != RuntimePlatform.Android) {
+        if (!GameManager.instance.IsMobileDevice) {
             var hit = Physics2D.Linecast(start, end, m_obstacleMask);
             isPossible = hit.collider == null;
         }

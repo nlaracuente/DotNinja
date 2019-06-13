@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 /// The player controlled avatar
 /// </summary>
 [RequireComponent(typeof(Rigidbody2D), typeof(SpriteRenderer))]
-public class Player : MonoBehaviour, IPointerDownHandler
+public class Player : MonoBehaviour, IPointerClickHandler
 {
     /// <summary>
     /// How fast the player moves towards the next connector
@@ -141,7 +141,7 @@ public class Player : MonoBehaviour, IPointerDownHandler
     /// Resets connections
     /// </summary>
     /// <param name="eventData"></param>
-    public void OnPointerDown(PointerEventData eventData)
+    public void OnPointerClick(PointerEventData eventData)
     {
         if (PreventAction()) {
             return;
@@ -149,20 +149,6 @@ public class Player : MonoBehaviour, IPointerDownHandler
 
         ResetConnections();
     }
-
-    /// <summary>
-    /// Removes all active connections
-    /// </summary>
-    //void OnMouseDown()
-    //{
-    //    // Ignore when moving
-    //    if (PreventAction())
-    //    {
-    //        return;
-    //    }
-
-    //    ResetConnections();
-    //}
 
     /// <summary>
     /// Clears all active connections and updates the line renderer

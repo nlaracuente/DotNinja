@@ -107,14 +107,16 @@ public class LevelSelectionButton : MonoBehaviour, IPointerEnterHandler, IPointe
         m_levelNumberText.text = "";
     }
 
-    #region PC_AND_DESKTOP_ONLY
+    #region HTML_AND_DESKTOP_ONLY
     /// <summary>
     /// Mouse over effect
     /// </summary>
     /// <param name="eventData"></param>
     public void OnPointerEnter(PointerEventData eventData)
     {
-       // m_levelNumberText.color = m_highlightedTextColor;
+        if (!GameManager.instance.IsMobileDevice) {
+            m_levelNumberText.color = m_highlightedTextColor;
+        }
     }
 
     /// <summary>
@@ -123,7 +125,9 @@ public class LevelSelectionButton : MonoBehaviour, IPointerEnterHandler, IPointe
     /// <param name="eventData"></param>
     public void OnPointerExit(PointerEventData eventData)
     {
-       // m_levelNumberText.color = m_normalTextColor;
+        if (!GameManager.instance.IsMobileDevice) {
+            m_levelNumberText.color = m_normalTextColor;
+        }
     }
     #endregion
 

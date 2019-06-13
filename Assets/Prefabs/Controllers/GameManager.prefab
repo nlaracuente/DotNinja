@@ -50,4 +50,4 @@ MonoBehaviour:
   m_mainMenuSceneName: MainMenu
   m_levelSceneNameFormat: Level_{0}
   m_creditsSceneName: Credits
-  m_saveFileName: DotNinja.gd
+  m_saveFileName: DotNinja.data
